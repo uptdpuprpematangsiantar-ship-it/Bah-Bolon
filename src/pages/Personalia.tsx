@@ -59,6 +59,20 @@ const GOLONGAN_OPTIONS = [
   { value: 'IV/e', label: 'Golongan IV/e - Pembina Utama' }
 ];
 
+// Helper to determine rank weight (higher is higher rank)
+export const getPangkatRank = (pangkat: string): number => {
+  const list = [
+    'Honor', 
+    'PPPK', 
+    'I/a', 'I/b', 'I/c', 'I/d', 
+    'II/a', 'II/b', 'II/c', 'II/d', 
+    'III/a', 'III/b', 'III/c', 'III/d', 
+    'IV/a', 'IV/b', 'IV/c', 'IV/d', 'IV/e'
+  ];
+  const index = list.indexOf(pangkat);
+  return index !== -1 ? index : -1;
+};
+
 export default function Personalia({
   items,
   onAddItem,
@@ -325,7 +339,13 @@ export default function Personalia({
               </tr>
             </thead>
             <tbody>
-              ${items.map((item, idx) => `
+              ${[...items]
+                .sort((a, b) => {
+                  const diff = getPangkatRank(b.pangkatGolongan) - getPangkatRank(a.pangkatGolongan);
+                  if (diff !== 0) return diff;
+                  return a.nama.localeCompare(b.nama);
+                })
+                .map((item, idx) => `
                 <tr>
                   <td>${idx + 1}</td>
                   <td>
@@ -376,6 +396,16 @@ export default function Personalia({
 
     return matchesSearch && matchesGolongan && matchesGender;
   });
+
+  // Sort from highest rank/golongan to lowest
+  const sortedFilteredItems = React.useMemo(() => {
+    return [...filteredItems].sort((a, b) => {
+      const diff = getPangkatRank(b.pangkatGolongan) - getPangkatRank(a.pangkatGolongan);
+      if (diff !== 0) return diff;
+      // Secondary sort: by name alphabetically if same rank
+      return a.nama.localeCompare(b.nama);
+    });
+  }, [filteredItems]);
 
   return (
     <div className="space-y-6 font-sans text-slate-800 p-1">
@@ -567,8 +597,8 @@ export default function Personalia({
                   <th className="px-6 py-3.5 font-bold text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-150 bg-white">
-                {filteredItems.map((item) => {
+              <tbody>
+                {sortedFilteredItems.map((item) => {
                   return (
                     <tr key={item.id} className="hover:bg-slate-50/70 transition-colors align-middle">
                       {/* 1. Nama Lengkap & NIP */}
