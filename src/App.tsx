@@ -345,6 +345,7 @@ export default function App() {
             onAddItem={handleAddAset}
             onUpdateItem={handleUpdateAset}
             onDeleteItem={handleDeleteAset}
+            personaliaItems={personalia}
           />
         );
       case 'keuangan':

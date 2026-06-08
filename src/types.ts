@@ -101,6 +101,18 @@ export interface AsetInventarisItem {
   nilaiAset: number;
 }
 
+export interface DistribusiAset {
+  id: string;
+  idAset: string;
+  namaAset: string;
+  penerima: string;
+  seksiBagian: string;
+  jumlah: number;
+  tanggalDistribusi: string;
+  statusDistribusi: 'Dipinjam' | 'Digunakan' | 'Dikembalikan' | 'Rusak/Hilang';
+  keterangan: string;
+}
+
 export interface KeuanganItem {
   id: string;
   kodeAnggaran: string;
