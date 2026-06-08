@@ -106,54 +106,124 @@ export default function AsetInventaris({
   const handleSeedDummyAssets = () => {
     const dummyAssets: AsetInventarisItem[] = [
       {
-        id: 'ast-sample-1',
-        kodeAset: 'KIB-B.01.001',
-        namaAset: 'Excavator Kobelco SK200',
-        kategori: 'Mesin Pompa / Alat Berat',
+        id: 'ast-sample-kib-a-1',
+        kodeAset: 'KIB-A.01.0001',
+        namaAset: 'Tanah Lahan Bendung DI Bah Bolon',
+        kategori: 'KIB A: Tanah',
+        jumlah: 1,
+        kondisi: 'Baik',
+        tanggalPerolehan: '2015-05-10',
+        nilaiAset: 1850000000
+      },
+      {
+        id: 'ast-sample-kib-a-2',
+        kodeAset: 'KIB-A.01.0002',
+        namaAset: 'Tanah Lahan Bangunan Kantor Jaga',
+        kategori: 'KIB A: Tanah',
+        jumlah: 1,
+        kondisi: 'Baik',
+        tanggalPerolehan: '2018-08-22',
+        nilaiAset: 320000000
+      },
+      {
+        id: 'ast-sample-kib-b-1',
+        kodeAset: 'KIB-B.01.0001',
+        namaAset: 'Excavator Kobelco SK200-10',
+        kategori: 'KIB B: Peralatan & Mesin',
         jumlah: 2,
         kondisi: 'Baik',
         tanggalPerolehan: '2023-04-12',
         nilaiAset: 1450000000
       },
       {
-        id: 'ast-sample-2',
-        kodeAset: 'KIB-B.02.012',
+        id: 'ast-sample-kib-b-2',
+        kodeAset: 'KIB-B.02.0012',
         namaAset: 'Mobil Operasional Toyota Hilux D-Cab',
-        kategori: 'Kendaraan Dinas',
+        kategori: 'KIB B: Peralatan & Mesin',
         jumlah: 1,
         kondisi: 'Baik',
         tanggalPerolehan: '2024-08-15',
         nilaiAset: 485000000
       },
       {
-        id: 'ast-sample-3',
-        kodeAset: 'KIB-B.01.005',
+        id: 'ast-sample-kib-b-3',
+        kodeAset: 'KIB-B.01.0005',
         namaAset: 'Genset Portabel Honda 5 KVA',
-        kategori: 'Mesin Pompa / Alat Berat',
+        kategori: 'KIB B: Peralatan & Mesin',
         jumlah: 3,
         kondisi: 'Baik',
         tanggalPerolehan: '2022-11-20',
         nilaiAset: 24000000
       },
       {
-        id: 'ast-sample-4',
-        kodeAset: 'KIB-B.03.045',
-        namaAset: 'Komputer Server TU & GIS',
-        kategori: 'Peralatan Kantor',
+        id: 'ast-sample-kib-b-4',
+        kodeAset: 'KIB-B.03.0045',
+        namaAset: 'Komputer Server TU & GIS Intel i9',
+        kategori: 'KIB B: Peralatan & Mesin',
         jumlah: 1,
         kondisi: 'Rusak Ringan',
         tanggalPerolehan: '2021-06-05',
         nilaiAset: 18500000
       },
       {
-        id: 'ast-sample-5',
-        kodeAset: 'KIB-C.10.001',
-        namaAset: 'Gedung Kantor Jaga Air Bah Bolon',
-        kategori: 'Aset Sipil (Bangunan)',
+        id: 'ast-sample-kib-c-1',
+        kodeAset: 'KIB-C.10.0001',
+        namaAset: 'Gedung Kantor Jaga Air Bah Bolon Utama',
+        kategori: 'KIB C: Gedung & Bangunan',
         jumlah: 1,
         kondisi: 'Baik',
         tanggalPerolehan: '2019-10-10',
-        nilaiAset: 350000000
+        nilaiAset: 450000000
+      },
+      {
+        id: 'ast-sample-kib-c-2',
+        kodeAset: 'KIB-C.10.0002',
+        namaAset: 'Rumah Dinas Penjaga Pintu Bendung',
+        kategori: 'KIB C: Gedung & Bangunan',
+        jumlah: 2,
+        kondisi: 'Rusak Ringan',
+        tanggalPerolehan: '2016-03-14',
+        nilaiAset: 185000000
+      },
+      {
+        id: 'ast-sample-kib-d-1',
+        kodeAset: 'KIB-D.20.0051',
+        namaAset: 'Jaringan Irigasi Saluran Sekunder Bah Bolon',
+        kategori: 'KIB D: Jalan, Irigasi & Jaringan',
+        jumlah: 1,
+        kondisi: 'Baik',
+        tanggalPerolehan: '2020-07-21',
+        nilaiAset: 2570000000
+      },
+      {
+        id: 'ast-sample-kib-d-2',
+        kodeAset: 'KIB-D.20.0052',
+        namaAset: 'Pintu Air Intake Utama (Besi Cor)',
+        kategori: 'KIB D: Jalan, Irigasi & Jaringan',
+        jumlah: 4,
+        kondisi: 'Baik',
+        tanggalPerolehan: '2021-11-18',
+        nilaiAset: 85000000
+      },
+      {
+        id: 'ast-sample-kib-e-1',
+        kodeAset: 'KIB-E.30.0001',
+        namaAset: 'Buku Rencana Umum Tata Ruang Wilayah',
+        kategori: 'KIB E: Aset Tetap Lainnya',
+        jumlah: 1,
+        kondisi: 'Baik',
+        tanggalPerolehan: '2022-02-10',
+        nilaiAset: 65000000
+      },
+      {
+        id: 'ast-sample-kib-f-1',
+        kodeAset: 'KIB-F.40.0001',
+        namaAset: 'Rehabilitasi Pintu Air Penguras DI Bah Bolon',
+        kategori: 'KIB F: Konstruksi dalam Pengerjaan',
+        jumlah: 1,
+        kondisi: 'Baik',
+        tanggalPerolehan: '2026-03-01',
+        nilaiAset: 980000000
       }
     ];
 
@@ -166,6 +236,18 @@ export default function AsetInventaris({
   const [invSearch, setInvSearch] = useState('');
   const [invKategori, setInvKategori] = useState('ALL');
   const [invKondisi, setInvKondisi] = useState('ALL');
+
+  const kibCategories = useMemo(() => {
+    return [
+      { key: 'ALL', label: 'Semua KIB', count: items.length },
+      { key: 'KIB A: Tanah', label: 'KIB A: Tanah', count: items.filter(i => i.kategori === 'KIB A: Tanah').length },
+      { key: 'KIB B: Peralatan & Mesin', label: 'KIB B: Peralatan & Mesin', count: items.filter(i => i.kategori === 'KIB B: Peralatan & Mesin').length },
+      { key: 'KIB C: Gedung & Bangunan', label: 'KIB C: Gedung & Bangunan', count: items.filter(i => i.kategori === 'KIB C: Gedung & Bangunan').length },
+      { key: 'KIB D: Jalan, Irigasi & Jaringan', label: 'KIB D: Jalan, Irigasi & Jaringan', count: items.filter(i => i.kategori === 'KIB D: Jalan, Irigasi & Jaringan').length },
+      { key: 'KIB E: Aset Tetap Lainnya', label: 'KIB E: Aset Tetap Lainnya', count: items.filter(i => i.kategori === 'KIB E: Aset Tetap Lainnya').length },
+      { key: 'KIB F: Konstruksi dalam Pengerjaan', label: 'KIB F: Konstruksi dalam Pengerjaan', count: items.filter(i => i.kategori === 'KIB F: Konstruksi dalam Pengerjaan').length }
+    ];
+  }, [items]);
 
   const filteredAssets = useMemo(() => {
     return items.filter(ast => {
@@ -233,7 +315,7 @@ export default function AsetInventaris({
   const [assetForm, setAssetForm] = useState({
     kodeAset: '',
     namaAset: '',
-    kategori: 'Peralatan Kantor' as AsetInventarisItem['kategori'],
+    kategori: 'KIB B: Peralatan & Mesin' as AsetInventarisItem['kategori'],
     jumlah: 1,
     kondisi: 'Baik' as AsetInventarisItem['kondisi'],
     tanggalPerolehan: new Date().toISOString().split('T')[0],
@@ -245,7 +327,7 @@ export default function AsetInventaris({
     setAssetForm({
       kodeAset: 'KIB-B.03.' + String(items.length + 1).padStart(3, '0'),
       namaAset: '',
-      kategori: 'Peralatan Kantor',
+      kategori: 'KIB B: Peralatan & Mesin',
       jumlah: 1,
       kondisi: 'Baik',
       tanggalPerolehan: new Date().toISOString().split('T')[0],
@@ -660,6 +742,38 @@ export default function AsetInventaris({
             </div>
           </div>
 
+          {/* KIB Quick Filter Pills */}
+          <div className="space-y-2 bg-gradient-to-r from-slate-50 to-slate-100 p-4 border border-slate-200/70 rounded-2xl">
+            <label className="text-[10px] uppercase font-black text-slate-500 tracking-wider flex items-center gap-1.5 select-none">
+              <Filter className="h-3 w-3 text-indigo-500" />
+              <span>Pilah Berdasarkan Kartu Inventaris Barang (KIB A s/d F)</span>
+            </label>
+            <div className="flex flex-wrap gap-2 items-center overflow-x-auto min-w-0 pb-1">
+              {kibCategories.map((kib) => {
+                const isActive = invKategori === kib.key;
+                return (
+                  <button
+                    key={kib.key}
+                    type="button"
+                    onClick={() => setInvKategori(kib.key)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-indigo-650 text-white shadow-3xs hover:bg-indigo-700'
+                        : 'text-slate-650 hover:bg-white border border-slate-200 bg-white/70 hover:shadow-2xs'
+                    }`}
+                  >
+                    <span>{kib.label}</span>
+                    <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
+                      isActive ? 'bg-indigo-805 text-indigo-100' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {kib.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Table Operations: Search, Category Filters, Conditional Buttons */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-50 border border-slate-200/60 p-3 rounded-2xl">
             <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-0">
@@ -682,11 +796,13 @@ export default function AsetInventaris({
                 onChange={(e) => setInvKategori(e.target.value)}
                 className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               >
-                <option value="ALL">Semua Kategori</option>
-                <option value="Peralatan Kantor">Peralatan Kantor</option>
-                <option value="Kendaraan Dinas">Kendaraan Dinas</option>
-                <option value="Mesin Pompa / Alat Berat">Mesin Pompa / Alat Berat</option>
-                <option value="Aset Sipil (Bangunan)">Aset Sipil (Bangunan)</option>
+                <option value="ALL">Semua Kategori (KIB A-F)</option>
+                <option value="KIB A: Tanah">KIB A: Tanah</option>
+                <option value="KIB B: Peralatan & Mesin">KIB B: Peralatan & Mesin</option>
+                <option value="KIB C: Gedung & Bangunan">KIB C: Gedung & Bangunan</option>
+                <option value="KIB D: Jalan, Irigasi & Jaringan">KIB D: Jalan, Irigasi & Jaringan</option>
+                <option value="KIB E: Aset Tetap Lainnya">KIB E: Aset Tetap Lainnya</option>
+                <option value="KIB F: Konstruksi dalam Pengerjaan">KIB F: Konstruksi dalam Pengerjaan</option>
               </select>
 
               {/* Condition Filter */}
@@ -1151,10 +1267,12 @@ export default function AsetInventaris({
                   onChange={(e) => setAssetForm({...assetForm, kategori: e.target.value as any})}
                   className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-medium"
                 >
-                  <option value="Peralatan Kantor">Peralatan Kantor</option>
-                  <option value="Kendaraan Dinas">Kendaraan Dinas</option>
-                  <option value="Mesin Pompa / Alat Berat">Mesin Pompa / Alat Berat</option>
-                  <option value="Aset Sipil (Bangunan)">Aset Sipil (Bangunan)</option>
+                  <option value="KIB A: Tanah">KIB A: Tanah</option>
+                  <option value="KIB B: Peralatan & Mesin">KIB B: Peralatan & Mesin</option>
+                  <option value="KIB C: Gedung & Bangunan">KIB C: Gedung & Bangunan</option>
+                  <option value="KIB D: Jalan, Irigasi & Jaringan">KIB D: Jalan, Irigasi & Jaringan</option>
+                  <option value="KIB E: Aset Tetap Lainnya">KIB E: Aset Tetap Lainnya</option>
+                  <option value="KIB F: Konstruksi dalam Pengerjaan">KIB F: Konstruksi dalam Pengerjaan</option>
                 </select>
               </div>
 

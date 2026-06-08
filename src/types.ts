@@ -94,7 +94,7 @@ export interface AsetInventarisItem {
   id: string;
   kodeAset: string;
   namaAset: string;
-  kategori: 'Peralatan Kantor' | 'Kendaraan Dinas' | 'Mesin Pompa / Alat Berat' | 'Aset Sipil (Bangunan)';
+  kategori: 'KIB A: Tanah' | 'KIB B: Peralatan & Mesin' | 'KIB C: Gedung & Bangunan' | 'KIB D: Jalan, Irigasi & Jaringan' | 'KIB E: Aset Tetap Lainnya' | 'KIB F: Konstruksi dalam Pengerjaan';
   jumlah: number;
   kondisi: 'Baik' | 'Rusak Ringan' | 'Rusak Berat';
   tanggalPerolehan: string;
