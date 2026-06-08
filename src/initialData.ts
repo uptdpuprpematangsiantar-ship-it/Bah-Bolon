@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { InstansiProfile, UserAccount, PenatausahaanItem, OperasionalItem, PembangunanItem, AdmUmumItem, PersonaliaItem, AsetInventarisItem, KeuanganItem } from './types';
+import { InstansiProfile, UserAccount, PenatausahaanItem, OperasionalItem, PembangunanItem, AdmUmumItem, PersonaliaItem, AsetInventarisItem, KeuanganItem, DaerahIrigasi, BangunanIrigasi } from './types';
 
 export const defaultProfile: InstansiProfile = {
   name: 'UPTD PUPR Pematangsiantar',
@@ -136,3 +136,72 @@ export const defaultPersonalia: PersonaliaItem[] = [
 ];
 export const defaultAsetInventaris: AsetInventarisItem[] = [];
 export const defaultKeuangan: KeuanganItem[] = [];
+
+export const defaultDaerahIrigasi: DaerahIrigasi[] = [
+  {
+    id: 'di-1',
+    namaDI: 'DI Bah Bolon',
+    lokasi: 'Siantar Marimbun, Kota Pematangsiantar',
+    luasAreal: 2750,
+    sumberAir: 'Sungai Bah Bolon',
+    kondisi: 'Baik',
+    bangunanPendukung: [
+      {
+        id: 'bg-1-1',
+        namaBangunan: 'Bendung Utama Bah Bolon',
+        kategori: 'Bendung',
+        kondisi: 'Baik',
+        keterangan: 'Mercu bendung kokoh, debit air lancar, tidak ada retakan struktural.',
+        koordinat: '2.9463, 99.0438',
+        foto: ''
+      },
+      {
+        id: 'bg-1-2',
+        namaBangunan: 'Pintu Intake Utama',
+        kategori: 'Pintu Air',
+        kondisi: 'Baik',
+        keterangan: 'Pintu besi manual dan dinamo elektrik pelumas gasing bekerja 100% lancar.',
+        koordinat: '2.9465, 99.0441',
+        foto: ''
+      },
+      {
+        id: 'bg-1-3',
+        namaBangunan: 'Saluran Primer Marimbun',
+        kategori: 'Saluran Pembawa',
+        kondisi: 'Baik',
+        keterangan: 'Dinding penahan beton precast bebas sedimentasi parah, aliran lancar.',
+        koordinat: '2.9472, 99.0451',
+        foto: ''
+      }
+    ]
+  },
+  {
+    id: 'di-2',
+    namaDI: 'DI Simarimbun',
+    lokasi: 'Siantar Selatan, Kota Pematangsiantar',
+    luasAreal: 450,
+    sumberAir: 'Mata Air Simarimbun',
+    kondisi: 'Rusak Ringan',
+    bangunanPendukung: [
+      {
+        id: 'bg-2-1',
+        namaBangunan: 'Sipon Simarimbun',
+        kategori: 'Bangunan Pelengkap',
+        kondisi: 'Rusak Ringan',
+        keterangan: 'Terjadi rembesan air pada sambungan pipa baja bawah selokan.',
+        koordinat: '2.9321, 99.0315',
+        foto: ''
+      },
+      {
+        id: 'bg-2-2',
+        namaBangunan: 'Pintu Sadap Tersier Simarimbun',
+        kategori: 'Bangunan Sadap',
+        kondisi: 'Baik',
+        keterangan: 'Pintu sadap tersier aman, air mengairi sawah masyarakat.',
+        koordinat: '2.9335, 99.0328',
+        foto: ''
+      }
+    ]
+  }
+];
+

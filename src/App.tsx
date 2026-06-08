@@ -13,7 +13,8 @@ import {
   AdmUmumItem,
   PersonaliaItem,
   AsetInventarisItem,
-  KeuanganItem
+  KeuanganItem,
+  DaerahIrigasi
 } from './types';
 import {
   defaultProfile,
@@ -24,7 +25,8 @@ import {
   defaultAdmUmum,
   defaultPersonalia,
   defaultAsetInventaris,
-  defaultKeuangan
+  defaultKeuangan,
+  defaultDaerahIrigasi
 } from './initialData';
 
 // Subcomponents & Pages
@@ -109,6 +111,11 @@ export default function App() {
     return saved ? JSON.parse(saved) : defaultKeuangan;
   });
 
+  const [daerahIrigasi, setDaerahIrigasi] = useState<DaerahIrigasi[]>(() => {
+    const saved = localStorage.getItem('siat_daerah_irigasi');
+    return saved ? JSON.parse(saved) : defaultDaerahIrigasi;
+  });
+
   // --- Storage Clean Hard Reset on Mount ---
   useEffect(() => {
     const isReset = localStorage.getItem('siat_storage_reset_v4');
@@ -181,6 +188,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('siat_keuangan', JSON.stringify(keuangan));
   }, [keuangan]);
+
+  useEffect(() => {
+    localStorage.setItem('siat_daerah_irigasi', JSON.stringify(daerahIrigasi));
+  }, [daerahIrigasi]);
 
   useEffect(() => {
     if (currentUser) {
@@ -364,6 +375,8 @@ export default function App() {
             onAddItem={handleAddOperasional}
             onUpdateItem={handleUpdateOperasional}
             onDeleteItem={handleDeleteOperasional}
+            daerahIrigasiItems={daerahIrigasi}
+            onUpdateDaerahIrigasi={setDaerahIrigasi}
           />
         );
       case 'pembangunan':

@@ -147,3 +147,24 @@ export interface StokTransaksi {
   keterangan: string;
 }
 
+export interface BangunanIrigasi {
+  id: string;
+  namaBangunan: string;
+  kategori: string;
+  kondisi: 'Baik' | 'Rusak Ringan' | 'Rusak Sedang' | 'Rusak Berat';
+  keterangan: string;
+  foto?: string; // base64 or URL
+  koordinat: string; // e.g. "2.9654, 99.0621"
+}
+
+export interface DaerahIrigasi {
+  id: string;
+  namaDI: string;
+  lokasi: string;
+  luasAreal: number;
+  sumberAir: string;
+  kondisi: 'Baik' | 'Rusak Ringan' | 'Rusak Sedang' | 'Rusak Berat';
+  bangunanPendukung: BangunanIrigasi[];
+}
+
+
