@@ -628,182 +628,201 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
             )}
           </div>
         ) : (
-          /* Desk & Responsive Card List */
-          <div className="divide-y divide-slate-150">
-            {/* Table Header for medium screens and above */}
-            <div className="hidden md:grid md:grid-cols-12 gap-4 px-6 py-3.5 bg-slate-50 border-b border-slate-150 text-[10px] uppercase font-black text-slate-450 tracking-wider">
-              <div className="col-span-3">Agenda Surat</div>
-              <div className="col-span-4">Perihal (Hal) & Klasifikasi</div>
-              <div className="col-span-2">{activeTab === 'surat_masuk' ? 'Pengirim (Asal)' : 'Tujuan (Ke)'}</div>
-              <div className="col-span-1 text-center">Status</div>
-              <div className="col-span-2 text-right">Aksi</div>
-            </div>
-
-            {/* List items */}
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className="p-5 md:px-6 md:py-4.5 hover:bg-slate-50 transition-colors grid grid-cols-1 md:grid-cols-12 gap-3.5 md:gap-4 items-center"
-              >
-                {/* 1. File description/numbers */}
-                <div className="col-span-1 md:col-span-3 space-y-1.5">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[10px] font-semibold text-slate-450">No. Agenda:</span>
-                    <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 border border-slate-200 px-1 py-0.5 rounded-sm">
-                      {item.nomorSurat}
-                    </span>
-                  </div>
-
-                  {/* Info Surat Asli Diterima khusus Surat Masuk */}
-                  {item.jenisSurat === 'Surat Masuk' && (item.nomorSuratDiterima || item.tanggalSuratDiterima) && (
-                    <div className="p-1.5 bg-slate-50 border border-slate-150 rounded-lg text-[10px] text-slate-650 space-y-0.5">
-                      {item.nomorSuratDiterima && (
-                        <div className="leading-tight">
-                          <span className="text-slate-450 font-bold">No. Surat:</span>{' '}
-                          <span className="font-mono font-black text-slate-800 break-all">{item.nomorSuratDiterima}</span>
+          /* Bookkeeping Data Table */
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left border-collapse min-w-[1000px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-150 text-[10px] uppercase font-black text-slate-450 tracking-wider">
+                  <th className="px-6 py-3.5 font-bold">Agenda Surat</th>
+                  {activeTab === 'surat_masuk' && (
+                    <th className="px-6 py-3.5 font-bold">Detail Surat Asli</th>
+                  )}
+                  <th className="px-6 py-3.5 font-bold">Perihal & Klasifikasi</th>
+                  <th className="px-6 py-3.5 font-bold">{activeTab === 'surat_masuk' ? 'Pengirim (Asal)' : 'Tujuan (Ke)'}</th>
+                  <th className="px-4 py-3.5 font-bold text-center">Status</th>
+                  <th className="px-6 py-3.5 font-bold text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-150 bg-white">
+                {filteredItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-slate-50/70 transition-colors align-middle">
+                    {/* Column 1: Agenda Surat */}
+                    <td className="px-6 py-4.5 whitespace-nowrap">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-semibold text-slate-400">No. Agenda:</span>
+                          <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">
+                            {item.nomorSurat}
+                          </span>
                         </div>
-                      )}
-                      {item.tanggalSuratDiterima && (
-                        <div className="leading-tight">
-                          <span className="text-slate-450 font-bold">Tgl. Surat:</span>{' '}
-                          <span className="font-bold text-slate-850">{item.tanggalSuratDiterima}</span>
+                        <div className="flex flex-col gap-1 text-[11px] text-slate-500">
+                          <span className="flex items-center gap-1" title="Tanggal Registrasi / Agenda">
+                            <Calendar className="h-3.5 w-3.5 text-violet-500 shrink-0" />
+                            <span>{item.tanggalArsip}</span>
+                          </span>
+                          <span className="flex items-center gap-1" title="Lokasi Penyimpanan Fisik">
+                            <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                            <span className="truncate max-w-[150px] font-medium text-slate-600" title={item.lokasiFisik}>
+                              {item.lokasiFisik}
+                            </span>
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    </td>
 
-                  <div className="flex items-center gap-2 text-[11px] text-slate-450">
-                    <span className="flex items-center gap-1" title="Tanggal Registrasi / Agenda">
-                      <Calendar className="h-3 w-3 shrink-0" />
-                      <span>{item.tanggalArsip}</span>
-                    </span>
-                    <span className="inline-block h-1 w-1 rounded-full bg-slate-300" />
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 shrink-0" />
-                      <span className="truncate max-w-[120px]" title={item.lokasiFisik}>{item.lokasiFisik}</span>
-                    </span>
-                  </div>
-                </div>
-
-                {/* 2. Topic/Perihal & Category badge */}
-                <div className="col-span-1 md:col-span-4 space-y-2">
-                  <h4 className="text-xs font-bold text-slate-800 leading-normal">
-                    {item.namaDokumen}
-                  </h4>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-violet-50 text-violet-700 border border-violet-100">
-                      {item.klasifikasi}
-                    </span>
-                    {item.keterangan && (
-                      <span className="text-[10px] text-slate-450 truncate max-w-[200px]" title={item.keterangan}>
-                        {item.keterangan}
-                      </span>
+                    {/* Column 2: Detail Surat Asli (Khusus Surat Masuk) */}
+                    {activeTab === 'surat_masuk' && (
+                      <td className="px-6 py-4.5">
+                        {item.nomorSuratDiterima || item.tanggalSuratDiterima ? (
+                          <div className="p-2 bg-slate-50 border border-slate-150 rounded-xl text-xs text-slate-700 min-w-[180px] max-w-[260px]">
+                            {item.nomorSuratDiterima && (
+                              <div className="mb-1 leading-normal">
+                                <span className="text-slate-450 text-[10px] uppercase font-extrabold block leading-none mb-0.5">No. Surat Asli</span>
+                                <span className="font-mono font-black text-slate-800 break-all">{item.nomorSuratDiterima}</span>
+                              </div>
+                            )}
+                            {item.tanggalSuratDiterima && (
+                              <div className="leading-normal mt-1 border-t border-slate-200/60 pt-1">
+                                <span className="text-slate-450 text-[10px] uppercase font-extrabold block leading-none mb-0.5">Tgl. Surat Asli</span>
+                                <span className="font-bold text-slate-800">{item.tanggalSuratDiterima}</span>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 italic">-</span>
+                        )}
+                      </td>
                     )}
-                  </div>
-                  {item.pdfUrl && (
-                    <div className="flex items-center gap-1.5 bg-rose-50/75 text-rose-700 border border-rose-100 px-2 py-1 rounded-lg text-[10px] font-bold w-full sm:w-fit mt-1 shadow-3xs">
-                      <Paperclip className="h-3 w-3 text-rose-650 shrink-0" />
-                      <span className="truncate max-w-[130px] sm:max-w-[170px] text-rose-800" title={item.pdfName || 'Dokumen.pdf'}>
-                        {item.pdfName || 'Dokumen.pdf'}
+
+                    {/* Column 3: Perihal & Klasifikasi */}
+                    <td className="px-6 py-4.5">
+                      <div className="space-y-1.5 min-w-[220px] max-w-sm">
+                        <h4 className="text-xs font-bold text-slate-850 leading-normal break-words">
+                          {item.namaDokumen}
+                        </h4>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black bg-violet-50 text-violet-700 border border-violet-100 uppercase tracking-tight">
+                            {item.klasifikasi}
+                          </span>
+                          {item.keterangan && (
+                            <span className="text-[10px] text-slate-400 font-medium truncate max-w-[180px]" title={item.keterangan}>
+                              {item.keterangan}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* PDF links directly inside column space */}
+                        {item.pdfUrl && (
+                          <div className="flex items-center gap-1.5 bg-rose-50/75 text-rose-700 border border-rose-100 px-2 py-0.5 rounded-lg text-[10px] font-bold w-fit mt-1 shadow-3xs">
+                            <Paperclip className="h-3 w-3 text-rose-650 shrink-0" />
+                            <span className="truncate max-w-[120px] text-rose-800" title={item.pdfName || 'Dokumen.pdf'}>
+                              {item.pdfName || 'Dokumen.pdf'}
+                            </span>
+                            <div className="flex items-center gap-1.5 pl-1.5 border-l border-rose-200 ml-auto sm:ml-0">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handlePreviewPdf(item.pdfUrl!, item.pdfName || 'Dokumen.pdf');
+                                }}
+                                className="hover:text-rose-950 hover:underline transition-all flex items-center gap-0.5 font-extrabold text-rose-750 cursor-pointer shrink-0"
+                                title="Pratinjau Dokumen PDF"
+                              >
+                                <Eye className="h-3 w-3" />
+                                <span>Buka</span>
+                              </button>
+                              <span className="text-rose-200">/</span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDownloadPdf(item.pdfUrl!, item.pdfName || 'Dokumen.pdf');
+                                }}
+                                className="hover:text-rose-950 hover:underline transition-all flex items-center gap-0.5 font-extrabold text-rose-750 cursor-pointer shrink-0"
+                                title="Unduh Dokumen PDF"
+                              >
+                                <Download className="h-3 w-3" />
+                                <span>Unduh</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Column 4: Pengirim (Asal) / Penerima (Tujuan) */}
+                    <td className="px-6 py-4.5">
+                      <div className="min-w-[160px] max-w-[240px]">
+                        {item.jenisSurat === 'Surat Masuk' ? (
+                          <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 shrink-0 text-[10px] font-black uppercase">
+                              IN
+                            </div>
+                            <div className="text-xs font-bold text-slate-700 leading-normal break-words">
+                              {item.asalSurat || <span className="text-slate-400 font-normal italic">Belum dispesifikasi</span>}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 shrink-0 text-[10px] font-black uppercase">
+                              OUT
+                            </div>
+                            <div className="text-xs font-bold text-slate-700 leading-normal break-words">
+                              {item.tujuanSurat || <span className="text-slate-400 font-normal italic">Belum dispesifikasi</span>}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Column 5: Status */}
+                    <td className="px-4 py-4.5 text-center whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                        item.status === 'Aktif'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                          : 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                      }`}>
+                        {item.status === 'Aktif' ? (
+                          <>
+                            <Clock className="h-3 w-3 text-amber-500 animate-pulse shrink-0" />
+                            <span>Dalam Proses</span>
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0" />
+                            <span>Selesai (Arsip)</span>
+                          </>
+                        )}
                       </span>
-                      <div className="flex items-center gap-1.5 pl-2 border-l border-rose-200 ml-auto sm:ml-0">
+                    </td>
+
+                    {/* Column 6: Aksi */}
+                    <td className="px-6 py-4.5 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePreviewPdf(item.pdfUrl!, item.pdfName || 'Dokumen.pdf');
-                          }}
-                          className="hover:text-rose-955 hover:underline transition-all flex items-center gap-0.5 font-extrabold text-rose-700 cursor-pointer shrink-0"
-                          title="Pratinjau Dokumen PDF"
+                          onClick={() => openEditModal(item)}
+                          title="Ubah data"
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors cursor-pointer"
                         >
-                          <Eye className="h-3.5 w-3.5" />
-                          <span>Buka</span>
+                          <Edit3 className="h-3.5 w-3.5" />
                         </button>
-                        <span className="text-rose-200">/</span>
                         <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDownloadPdf(item.pdfUrl!, item.pdfName || 'Dokumen.pdf');
+                          onClick={() => {
+                            if (window.confirm('Apakah Anda yakin ingin menghapus surat agenda ini? Semua data korespondensi ini akan hilang.')) {
+                              onDeleteItem(item.id);
+                            }
                           }}
-                          className="hover:text-rose-955 hover:underline transition-all flex items-center gap-0.5 font-extrabold text-rose-700 cursor-pointer shrink-0"
-                          title="Unduh Dokumen PDF"
+                          title="Hapus data"
+                          className="p-1.5 rounded-lg border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                         >
-                          <Download className="h-3 w-3" />
-                          <span>Unduh</span>
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* 3. Sender / Receiver profile */}
-                <div className="col-span-1 md:col-span-2">
-                  {activeTab === 'surat_masuk' ? (
-                    <div className="flex items-center gap-1.5">
-                      <div className="h-6 w-6 rounded-md bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-600 shrink-0 text-[10px] font-black uppercase">
-                        IN
-                      </div>
-                      <div className="text-xs font-bold text-slate-700 leading-tight">
-                        {item.asalSurat || <span className="text-slate-400 font-normal italic">Belum dispesifikasi</span>}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5">
-                      <div className="h-6 w-6 rounded-md bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 shrink-0 text-[10px] font-black uppercase">
-                        OUT
-                      </div>
-                      <div className="text-xs font-bold text-slate-700 leading-tight">
-                        {item.tujuanSurat || <span className="text-slate-400 font-normal italic">Belum dispesifikasi</span>}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* 4. Action required statuses */}
-                <div className="col-span-1 md:col-span-1 text-left md:text-center">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                    item.status === 'Aktif'
-                      ? 'bg-amber-50 text-amber-700 border border-amber-100'
-                      : 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                  }`}>
-                    {item.status === 'Aktif' ? (
-                      <>
-                        <Clock className="h-3 w-3 text-amber-500 animate-pulse shrink-0" />
-                        <span>Dalam Proses</span>
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0" />
-                        <span>Selesai (Arsip)</span>
-                      </>
-                    )}
-                  </span>
-                </div>
-
-                {/* 5. Trigger update actions */}
-                <div className="col-span-1 md:col-span-2 flex items-center justify-start md:justify-end gap-1.5 pt-2.5 md:pt-0 border-t border-slate-100 md:border-t-0">
-                  <button
-                    onClick={() => openEditModal(item)}
-                    title="Ubah data"
-                    className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors cursor-pointer"
-                  >
-                    <Edit3 className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (window.confirm('Apakah Anda yakin ingin menghapus surat agenda ini? Semua data korespondensi ini akan hilang.')) {
-                        onDeleteItem(item.id);
-                      }
-                    }}
-                    title="Hapus data"
-                    className="p-1.5 rounded-lg border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
