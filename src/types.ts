@@ -123,3 +123,27 @@ export interface KeuanganItem {
   statusAnggaran: 'Sesuai Target' | 'Mendekati Limit' | 'Over-budget';
 }
 
+export interface StokBarangItem {
+  id: string;
+  kodeBarang: string;
+  namaBarang: string;
+  kategori: 'Alat Tulis Kantor (ATK)' | 'Bahan Material & Sipil' | 'Suku Cadang & Elektrikal' | 'BBM & Pelumas' | 'Perlengkapan Lapangan & K3' | 'Kebutuhan Lainnya';
+  stokQty: number;
+  satuan: string;
+  stokMinimal: number;
+  lokasiGudang: string;
+  hargaSatuan: number;
+  keterangan: string;
+}
+
+export interface StokTransaksi {
+  id: string;
+  idBarang: string;
+  namaBarang: string;
+  tipe: 'Masuk' | 'Keluar';
+  jumlah: number;
+  tanggal: string;
+  petugas: string;
+  keterangan: string;
+}
+

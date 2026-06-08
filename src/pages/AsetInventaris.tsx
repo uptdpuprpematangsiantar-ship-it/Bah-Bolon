@@ -27,7 +27,7 @@ import {
   MapPin,
   ClipboardList
 } from 'lucide-react';
-import { AsetInventarisItem, DistribusiAset, PersonaliaItem } from '../types';
+import { AsetInventarisItem, DistribusiAset, PersonaliaItem, StokBarangItem, StokTransaksi } from '../types';
 
 interface AsetInventarisProps {
   items: AsetInventarisItem[];
@@ -47,7 +47,8 @@ export default function AsetInventaris({
   // Tabs Navigation
   // 'inventaris' = Inventaris Aset
   // 'distribusi' = Distribusi Aset
-  const [activeTab, setActiveTab] = useState<'inventaris' | 'distribusi'>('inventaris');
+  // 'stok' = Stok Barang (Habis Pakai)
+  const [activeTab, setActiveTab] = useState<'inventaris' | 'distribusi' | 'stok'>('inventaris');
 
   // Load local profile for print titles
   const profileName = useMemo(() => {
@@ -306,6 +307,333 @@ export default function AsetInventaris({
 
     return { totalDistUnit, dipinjam, digunakan, dikembalikan, rusakHilang };
   }, [distribusiList]);
+
+
+  // --- STATE STOK BARANG (HABIS PAKAI) ---
+  const [stokItems, setStokItems] = useState<StokBarangItem[]>(() => {
+    const saved = localStorage.getItem('siat_stok_barang');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return [];
+      }
+    }
+    return [
+      {
+        id: 'stk-1',
+        kodeBarang: 'STK-ATK.0001',
+        namaBarang: 'Kertas HVS A4 80gr Sinar Dunia',
+        kategori: 'Alat Tulis Kantor (ATK)',
+        stokQty: 45,
+        satuan: 'Rim',
+        stokMinimal: 10,
+        lokasiGudang: 'Ruang Tata Usaha',
+        hargaSatuan: 53000,
+        keterangan: 'Kebutuhan cetak draf surat & dokumen dinas'
+      },
+      {
+        id: 'stk-2',
+        kodeBarang: 'STK-MAT.0012',
+        namaBarang: 'Semen Padang Type I (50 Kg)',
+        kategori: 'Bahan Material & Sipil',
+        stokQty: 120,
+        satuan: 'Sak',
+        stokMinimal: 20,
+        lokasiGudang: 'Gudang OP Bendung',
+        hargaSatuan: 76000,
+        keterangan: 'Pekerjaan rehab dinding saluran & pilar pintu air'
+      },
+      {
+        id: 'stk-3',
+        kodeBarang: 'STK-SCD.0005',
+        namaBarang: 'Pipa PVC Rucika AW 3 Inch',
+        kategori: 'Bahan Material & Sipil',
+        stokQty: 25,
+        satuan: 'Batang',
+        stokMinimal: 5,
+        lokasiGudang: 'Gudang OP Bendung',
+        hargaSatuan: 145000,
+        keterangan: 'Stok perbaikan saluran perpipaan bocor'
+      },
+      {
+        id: 'stk-4',
+        kodeBarang: 'STK-BBM.0002',
+        namaBarang: 'Pelumas Mesin Meditran S SAE 40 (5L)',
+        kategori: 'BBM & Pelumas',
+        stokQty: 8,
+        satuan: 'Botol',
+        stokMinimal: 4,
+        lokasiGudang: 'Workshop Peralatan',
+        hargaSatuan: 240000,
+        keterangan: 'Pelumas mesin cadangan pompa solar & genset OP'
+      },
+      {
+        id: 'stk-5',
+        kodeBarang: 'STK-K3.0003',
+        namaBarang: 'Rompi Keselamatan Kerja Orange Reflektif',
+        kategori: 'Perlengkapan Lapangan & K3',
+        stokQty: 35,
+        satuan: 'Pcs',
+        stokMinimal: 10,
+        lokasiGudang: 'Lemari Logistik O&M',
+        hargaSatuan: 45000,
+        keterangan: 'APD petugas lapangan satgas drainase & bendung'
+      },
+      {
+        id: 'stk-6',
+        kodeBarang: 'STK-MAT.0045',
+        namaBarang: 'Cat Markah Jalan Warna Putih (20 Kg)',
+        kategori: 'Bahan Material & Sipil',
+        stokQty: 3,
+        satuan: 'Pail',
+        stokMinimal: 5,
+        lokasiGudang: 'Workshop Peralatan',
+        hargaSatuan: 850000,
+        keterangan: 'Cat marka pemeliharaan marka jalan kota'
+      }
+    ];
+  });
+
+  const [stokTransaksi, setStokTransaksi] = useState<StokTransaksi[]>(() => {
+    const saved = localStorage.getItem('siat_stok_transaksi');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return [];
+      }
+    }
+    return [
+      {
+        id: 'tr-stk-1',
+        idBarang: 'stk-2',
+        namaBarang: 'Semen Padang Type I (50 Kg)',
+        tipe: 'Masuk',
+        jumlah: 100,
+        tanggal: '2026-06-01',
+        petugas: 'Hendri Saputra',
+        keterangan: 'Pengadaan logistik triwulan II seksi OP'
+      },
+      {
+        id: 'tr-stk-2',
+        idBarang: 'stk-1',
+        namaBarang: 'Kertas HVS A4 80gr Sinar Dunia',
+        tipe: 'Keluar',
+        jumlah: 5,
+        tanggal: '2026-06-03',
+        petugas: 'Endang Sulastri',
+        keterangan: 'Cetak berkas usulan revisi DPA OP'
+      },
+      {
+        id: 'tr-stk-3',
+        idBarang: 'stk-5',
+        namaBarang: 'Rompi Keselamatan Kerja Orange Reflektif',
+        tipe: 'Keluar',
+        jumlah: 15,
+        tanggal: '2026-06-05',
+        petugas: 'Rian Hidayat, S.T.',
+        keterangan: 'Distribusi rompi tim pemeliharaan Bendung DI Bah Bolon'
+      }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('siat_stok_barang', JSON.stringify(stokItems));
+  }, [stokItems]);
+
+  useEffect(() => {
+    localStorage.setItem('siat_stok_transaksi', JSON.stringify(stokTransaksi));
+  }, [stokTransaksi]);
+
+  // STOK FILTER STATES
+  const [stokSearch, setStokSearch] = useState('');
+  const [stokFilterKategori, setStokFilterKategori] = useState('ALL');
+  const [stokFilterStatus, setStokFilterStatus] = useState('ALL');
+
+  // MODAL STOK STATES
+  const [showStokModal, setShowStokModal] = useState(false);
+  const [editingStok, setEditingStok] = useState<StokBarangItem | null>(null);
+  
+  const [stokForm, setStokForm] = useState({
+    kodeBarang: '',
+    namaBarang: '',
+    kategori: 'Alat Tulis Kantor (ATK)' as StokBarangItem['kategori'],
+    stokQty: 0,
+    satuan: 'Pcs',
+    stokMinimal: 5,
+    lokasiGudang: '',
+    hargaSatuan: 0,
+    keterangan: ''
+  });
+
+  // MODAL TRANSAKSI STOK STATES
+  const [showStokTxModal, setShowStokTxModal] = useState(false);
+  const [selectedStokForTx, setSelectedStokForTx] = useState<StokBarangItem | null>(null);
+  const [stokTxForm, setStokTxForm] = useState({
+    tipe: 'Masuk' as 'Masuk' | 'Keluar',
+    jumlah: 1,
+    tanggal: new Date().toISOString().split('T')[0],
+    petugas: '',
+    keterangan: ''
+  });
+
+  // Derived filter stock
+  const filteredStokItems = useMemo(() => {
+    return stokItems.filter(item => {
+      const matchSearch = 
+        item.namaBarang.toLowerCase().includes(stokSearch.toLowerCase()) ||
+        item.kodeBarang.toLowerCase().includes(stokSearch.toLowerCase()) ||
+        item.lokasiGudang.toLowerCase().includes(stokSearch.toLowerCase());
+
+      const matchKategori = stokFilterKategori === 'ALL' || item.kategori === stokFilterKategori;
+
+      let matchStatus = true;
+      if (stokFilterStatus === 'MENIPIS') {
+        matchStatus = item.stokQty <= item.stokMinimal && item.stokQty > 0;
+      } else if (stokFilterStatus === 'HABIS') {
+        matchStatus = item.stokQty === 0;
+      } else if (stokFilterStatus === 'AMAN') {
+        matchStatus = item.stokQty > item.stokMinimal;
+      }
+
+      return matchSearch && matchKategori && matchStatus;
+    });
+  }, [stokItems, stokSearch, stokFilterKategori, stokFilterStatus]);
+
+  // Derived stock stats
+  const stokStats = useMemo(() => {
+    const totalVariasi = stokItems.length;
+    const totalNilaiStok = stokItems.reduce((acc, curr) => acc + (curr.stokQty * curr.hargaSatuan), 0);
+    const totalMenipis = stokItems.filter(i => i.stokQty <= i.stokMinimal && i.stokQty > 0).length;
+    const totalHabis = stokItems.filter(i => i.stokQty === 0).length;
+    return { totalVariasi, totalNilaiStok, totalMenipis, totalHabis };
+  }, [stokItems]);
+
+  const openAddStok = () => {
+    setEditingStok(null);
+    setStokForm({
+      kodeBarang: 'STK-' + String(stokItems.length + 1).padStart(4, '0'),
+      namaBarang: '',
+      kategori: 'Alat Tulis Kantor (ATK)',
+      stokQty: 10,
+      satuan: 'Pcs',
+      stokMinimal: 5,
+      lokasiGudang: 'Ruang Tata Usaha',
+      hargaSatuan: 15000,
+      keterangan: ''
+    });
+    setShowStokModal(true);
+  };
+
+  const openEditStok = (item: StokBarangItem) => {
+    setEditingStok(item);
+    setStokForm({
+      kodeBarang: item.kodeBarang,
+      namaBarang: item.namaBarang,
+      kategori: item.kategori,
+      stokQty: item.stokQty,
+      satuan: item.satuan,
+      stokMinimal: item.stokMinimal,
+      lokasiGudang: item.lokasiGudang,
+      hargaSatuan: item.hargaSatuan,
+      keterangan: item.keterangan
+    });
+    setShowStokModal(true);
+  };
+
+  const openStokTx = (item: StokBarangItem, tipe: 'Masuk' | 'Keluar') => {
+    setSelectedStokForTx(item);
+    setStokTxForm({
+      tipe: tipe,
+      jumlah: 1,
+      tanggal: new Date().toISOString().split('T')[0],
+      petugas: personaliaItems[0]?.nama || '',
+      keterangan: tipe === 'Masuk' ? 'Pengisian stok baru' : 'Pengambilan pemakaian kerja satgas'
+    });
+    setShowStokTxModal(true);
+  };
+
+  const handleSaveStok = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stokForm.namaBarang.trim()) return;
+
+    if (editingStok) {
+      // update
+      setStokItems(stokItems.map(i => i.id === editingStok.id ? {
+        ...i,
+        kodeBarang: stokForm.kodeBarang,
+        namaBarang: stokForm.namaBarang,
+        kategori: stokForm.kategori,
+        stokQty: Number(stokForm.stokQty),
+        satuan: stokForm.satuan,
+        stokMinimal: Number(stokForm.stokMinimal),
+        lokasiGudang: stokForm.lokasiGudang,
+        hargaSatuan: Number(stokForm.hargaSatuan),
+        keterangan: stokForm.keterangan
+      } : i));
+    } else {
+      // create
+      const newItem: StokBarangItem = {
+        id: 'stk-' + Date.now(),
+        kodeBarang: stokForm.kodeBarang,
+        namaBarang: stokForm.namaBarang,
+        kategori: stokForm.kategori,
+        stokQty: Number(stokForm.stokQty),
+        satuan: stokForm.satuan,
+        stokMinimal: Number(stokForm.stokMinimal),
+        lokasiGudang: stokForm.lokasiGudang,
+        hargaSatuan: Number(stokForm.hargaSatuan),
+        keterangan: stokForm.keterangan
+      };
+      setStokItems([newItem, ...stokItems]);
+    }
+    setShowStokModal(false);
+  };
+
+  const handleDeleteStok = (id: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus barang stok ini?')) {
+      setStokItems(stokItems.filter(i => i.id !== id));
+      setStokTransaksi(stokTransaksi.filter(t => t.idBarang !== id));
+    }
+  };
+
+  const handleSaveStokTx = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStokForTx) return;
+
+    const qtyChange = Number(stokTxForm.jumlah);
+    if (qtyChange <= 0) return;
+
+    // Check if drawing more than available
+    if (stokTxForm.tipe === 'Keluar' && qtyChange > selectedStokForTx.stokQty) {
+      alert(`Stok tidak mencukupi! Stok yang tersedia hanya ${selectedStokForTx.stokQty} ${selectedStokForTx.satuan}.`);
+      return;
+    }
+
+    // calculate new qty
+    const newQty = stokTxForm.tipe === 'Masuk' 
+      ? selectedStokForTx.stokQty + qtyChange 
+      : selectedStokForTx.stokQty - qtyChange;
+
+    // update stok-item list
+    setStokItems(stokItems.map(i => i.id === selectedStokForTx.id ? { ...i, stokQty: newQty } : i));
+
+    // record transaction log
+    const newTx: StokTransaksi = {
+      id: 'tr-stk-' + Date.now(),
+      idBarang: selectedStokForTx.id,
+      namaBarang: selectedStokForTx.namaBarang,
+      tipe: stokTxForm.tipe,
+      jumlah: qtyChange,
+      tanggal: stokTxForm.tanggal,
+      petugas: stokTxForm.petugas || 'Staf Tata Usaha',
+      keterangan: stokTxForm.keterangan || (stokTxForm.tipe === 'Masuk' ? 'Barang Masuk' : 'Barang Keluar')
+    };
+
+    setStokTransaksi([newTx, ...stokTransaksi]);
+    setShowStokTxModal(false);
+  };
 
 
   // --- MODALS / FORMS STATES ---
@@ -679,10 +1007,10 @@ export default function AsetInventaris({
         </div>
 
         {/* Action tabs to toggle */}
-        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl self-start md:self-auto shrink-0 border border-slate-200/50">
+        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-xl self-start md:self-auto shrink-0 border border-slate-200/50">
           <button
             onClick={() => setActiveTab('inventaris')}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'inventaris' 
                 ? 'bg-white text-indigo-700 shadow-3xs border border-slate-200/30' 
                 : 'text-slate-500 hover:text-slate-800'
@@ -694,7 +1022,7 @@ export default function AsetInventaris({
           
           <button
             onClick={() => setActiveTab('distribusi')}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'distribusi' 
                 ? 'bg-white text-indigo-700 shadow-3xs border border-slate-200/30' 
                 : 'text-slate-500 hover:text-slate-800'
@@ -702,6 +1030,18 @@ export default function AsetInventaris({
           >
             <ArrowRightLeft className="h-3.5 w-3.5" />
             <span>Distribusi Aset</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('stok')}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'stok' 
+                ? 'bg-white text-indigo-700 shadow-3xs border border-slate-200/30' 
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <ClipboardList className="h-3.5 w-3.5" />
+            <span>Stok Barang Habis Pakai</span>
           </button>
         </div>
       </div>
@@ -1215,6 +1555,717 @@ export default function AsetInventaris({
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* 4. TAB VIEW: STOK BARANG HABIS PAKAI */}
+      {activeTab === 'stok' && (
+        <div className="space-y-6 animate-fade-in">
+          
+          {/* Quick Stats Row for Stok Barang */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="bg-white border border-slate-150 p-4 rounded-2xl flex items-center gap-3 shadow-3xs">
+              <div className="h-9 w-9 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                <ClipboardList className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Jenis Barang</p>
+                <p className="text-base font-black text-slate-900">{stokStats.totalVariasi} <span className="text-xs text-slate-400 font-medium">Varian</span></p>
+              </div>
+            </div>
+
+            <div className="bg-white border border-slate-150 p-4 rounded-2xl flex items-center gap-3 shadow-3xs">
+              <div className="h-9 w-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                <TrendingUp className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Estimasi Nilai Stok</p>
+                <p className="text-base font-black text-emerald-700 font-sans">Rp {stokStats.totalNilaiStok.toLocaleString('id-ID')}</p>
+              </div>
+            </div>
+
+            <div className={`bg-white border p-4 rounded-2xl flex items-center gap-3 shadow-3xs transition-colors ${stokStats.totalMenipis > 0 ? 'border-amber-200 bg-amber-50/10' : 'border-slate-150'}`}>
+              <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${stokStats.totalMenipis > 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}>
+                <AlertTriangle className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Stok Menipis</p>
+                <p className={`text-base font-black ${stokStats.totalMenipis > 0 ? 'text-amber-700' : 'text-slate-900'}`}>{stokStats.totalMenipis} <span className="text-xs text-slate-400 font-medium opacity-70">Varian</span></p>
+              </div>
+            </div>
+
+            <div className={`bg-white border p-4 rounded-2xl flex items-center gap-3 shadow-3xs transition-colors ${stokStats.totalHabis > 0 ? 'border-rose-200 bg-rose-50/10 animate-pulse' : 'border-slate-150'}`}>
+              <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${stokStats.totalHabis > 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-500'}`}>
+                <X className="h-4.5 w-4.5 font-bold" />
+              </div>
+              <div>
+                <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Stok Habis (Kosong)</p>
+                <p className={`text-base font-black ${stokStats.totalHabis > 0 ? 'text-rose-700' : 'text-slate-900'}`}>{stokStats.totalHabis} <span className="text-xs text-slate-400 font-medium opacity-70">Varian</span></p>
+              </div>
+            </div>
+          </div>
+
+          {/* Table Operations: Search, Dropdowns, Add Button */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-50 border border-slate-200/60 p-3 rounded-2xl">
+            <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-0">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  type="text"
+                  value={stokSearch}
+                  onChange={(e) => setStokSearch(e.target.value)}
+                  placeholder="Cari kode, nama barang, atau lokasi gudang..."
+                  className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+
+              {/* Category Filter */}
+              <select
+                value={stokFilterKategori}
+                onChange={(e) => setStokFilterKategori(e.target.value)}
+                className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+              >
+                <option value="ALL">Semua Kategori Stok</option>
+                <option value="Alat Tulis Kantor (ATK)">Alat Tulis Kantor (ATK)</option>
+                <option value="Bahan Material & Sipil">Bahan Material & Sipil</option>
+                <option value="Suku Cadang & Elektrikal">Suku Cadang & Elektrikal</option>
+                <option value="BBM & Pelumas">BBM & Pelumas</option>
+                <option value="Perlengkapan Lapangan & K3">Perlengkapan Lapangan & K3</option>
+                <option value="Kebutuhan Lainnya">Kebutuhan Lainnya</option>
+              </select>
+
+              {/* Status Filter */}
+              <select
+                value={stokFilterStatus}
+                onChange={(e) => setStokFilterStatus(e.target.value)}
+                className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+              >
+                <option value="ALL">Semua Status Stok</option>
+                <option value="AMAN">Stok Aman</option>
+                <option value="MENIPIS">Stok Menipis (⚠️)</option>
+                <option value="HABIS">Stok Habis (Kosong ❌)</option>
+              </select>
+            </div>
+
+            <button
+              onClick={openAddStok}
+              className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-3xs cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>Tambah Barang Baru</span>
+            </button>
+          </div>
+
+          {/* STOCK GRID VIEW */}
+          {filteredStokItems.length === 0 ? (
+            <div className="bg-white border border-slate-150 p-12 text-center rounded-3xl flex flex-col items-center justify-center">
+              <ClipboardList className="h-10 w-10 text-slate-300 mb-2 stroke-1" />
+              <p className="text-slate-500 text-xs font-extrabold">Data Stok Barang Tidak Ditemukan</p>
+              <p className="text-slate-400 text-[11px] mt-1 max-w-sm">
+                Belum ada data barang habis pakai, atau filter penelusuran Anda tidak menghasilkan kecocokan data.
+              </p>
+              <button
+                onClick={() => { setStokSearch(''); setStokFilterKategori('ALL'); setStokFilterStatus('ALL'); }}
+                className="text-xs text-indigo-600 font-extrabold hover:underline mt-4 cursor-pointer"
+              >
+                Reset Filter Pencarian
+              </button>
+            </div>
+          ) : (
+            <div className="bg-white border border-slate-150 rounded-2xl overflow-hidden shadow-3xs">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-50/75 border-b border-slate-150 text-slate-450 font-extrabold text-[10px] uppercase tracking-wider">
+                      <th className="p-3 w-28">Kode Barang</th>
+                      <th className="p-3">Nama Barang / Deskripsi</th>
+                      <th className="p-3">Kategori</th>
+                      <th className="p-3">Gudang Penyimpanan</th>
+                      <th className="p-3 text-right">Harga Satuan</th>
+                      <th className="p-3 text-center">Batas Minimum</th>
+                      <th className="p-3 text-center w-36">Stok Aktif</th>
+                      <th className="p-3 text-right">Estimasi Nilai</th>
+                      <th className="p-3 text-center w-40 font-black">Alur Masuk/Keluar</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-150">
+                    {filteredStokItems.map((item) => {
+                      const isLow = item.stokQty <= item.stokMinimal && item.stokQty > 0;
+                      const isOut = item.stokQty === 0;
+                      
+                      let statusBadge = (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="h-1 w-1 rounded-full bg-emerald-500"></span>
+                          Aman
+                        </span>
+                      );
+                      if (isOut) {
+                        statusBadge = (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-rose-50 text-rose-700 border border-rose-200 animate-pulse">
+                            <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-ping"></span>
+                            Kosong
+                          </span>
+                        );
+                      } else if (isLow) {
+                        statusBadge = (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="h-1 w-1 rounded-full bg-amber-500"></span>
+                            Menipis
+                          </span>
+                        );
+                      }
+
+                      return (
+                        <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="p-3 font-mono font-black text-slate-500">{item.kodeBarang}</td>
+                          <td className="p-3">
+                            <div>
+                              <p className="font-extrabold text-slate-850 text-[12px]">{item.namaBarang}</p>
+                              {item.keterangan && (
+                                <p className="text-slate-450 text-[10px] mt-0.5 italic">{item.keterangan}</p>
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <span className="px-2 py-0.5 bg-slate-100 text-slate-650 rounded-md font-bold text-[10px]">
+                              {item.kategori}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-1 text-slate-600 font-medium">
+                              <MapPin className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                              <span>{item.lokasiGudang || 'Gudang Kantor'}</span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-right font-bold text-slate-700 whitespace-nowrap">
+                            Rp {item.hargaSatuan.toLocaleString('id-ID')}
+                          </td>
+                          <td className="p-3 text-center font-bold text-slate-550">
+                            {item.stokMinimal} {item.satuan}
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="flex items-baseline gap-1">
+                                <span className={`text-[13px] font-black font-sans ${
+                                  isOut ? 'text-rose-600' : isLow ? 'text-amber-600' : 'text-slate-800'
+                                }`}>
+                                  {item.stokQty}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-bold">{item.satuan}</span>
+                              </div>
+                              {statusBadge}
+                            </div>
+                          </td>
+                          <td className="p-3 text-right font-black text-slate-800 whitespace-nowrap">
+                            Rp {(item.stokQty * item.hargaSatuan).toLocaleString('id-ID')}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center justify-center gap-1.5">
+                              {/* Tambah Stok */}
+                              <button
+                                onClick={() => openStokTx(item, 'Masuk')}
+                                className="px-1.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-250 rounded-lg text-[10px] font-black flex items-center gap-0.5 transition-all cursor-pointer"
+                                title="Tambah Stok Masuk"
+                              >
+                                <Plus className="h-3 w-3" />
+                                <span>Masuk</span>
+                              </button>
+                              {/* Gunakan Stok */}
+                              <button
+                                onClick={() => openStokTx(item, 'Keluar')}
+                                disabled={isOut}
+                                className={`px-1.5 py-1 rounded-lg text-[10px] font-black flex items-center gap-0.5 transition-all ${
+                                  isOut 
+                                    ? 'bg-slate-50 text-slate-300 border border-slate-200 cursor-not-allowed'
+                                    : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer'
+                                }`}
+                                title="Gunakan Stok Keluar"
+                              >
+                                <X className="h-2.5 w-2.5" />
+                                <span>Gunakan</span>
+                              </button>
+                              {/* Edit detail barang */}
+                              <button
+                                onClick={() => openEditStok(item)}
+                                className="h-7 w-7 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-all font-bold cursor-pointer"
+                                title="Edit Detail Barang"
+                              >
+                                <Edit3 className="h-3.5 w-3.5" />
+                              </button>
+                              {/* Hapus */}
+                              <button
+                                onClick={() => handleDeleteStok(item.id)}
+                                className="h-7 w-7 rounded-lg border border-slate-250 flex items-center justify-center text-slate-450 hover:text-rose-600 hover:bg-rose-50/50 transition-all font-bold cursor-pointer"
+                                title="Hapus Barang"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* LEDGER RIWAYAT TRANSAKSI BARANG HABIS PAKAI */}
+          <div className="bg-slate-50 rounded-3xl p-5 border border-slate-200/80 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-7 w-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+                  <ClipboardList className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-black text-slate-800 tracking-tight uppercase">Buku Ringkasan Riwayat Transaksi Stok</h3>
+                  <p className="text-[10px] text-slate-400 font-medium font-sans">Histori pengisian dan pengambilan barang habis pakai sektoral UPTD.</p>
+                </div>
+              </div>
+
+              {/* Reset logs confirmation */}
+              <button
+                onClick={() => {
+                  try {
+                    const profile = JSON.parse(localStorage.getItem('siat_profile') || '{}');
+                    const profileText = profile.name || 'UPTD Dinas PUPR';
+                    const win = window.open('', '_blank');
+                    if (win) {
+                      const htmlStr = `
+                        <html>
+                          <head>
+                            <title>Laporan Mutasi Stok Barang Habis Pakai</title>
+                            <style>
+                              body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; font-size: 12px; color: #333; }
+                              .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #33s; padding-bottom: 10px; }
+                              .title { font-size: 16px; font-weight: bold; margin: 0; text-transform: uppercase; }
+                              .subtitle { font-size: 12px; margin: 4px 0 0; color: #555; }
+                              table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                              th { bg-color: #f5f5f5; font-weight: bold; }
+                              .text-right { text-align: right; }
+                              .badge-in { color: green; font-weight: bold; }
+                              .badge-out { color: red; font-weight: bold; }
+                            </style>
+                          </head>
+                          <body>
+                            <div class="header">
+                              <div class="title">LAPORAN MUTASI BULANAN STOK BARANG HABIS PAKAI</div>
+                              <div class="subtitle">${profileText}</div>
+                              <div class="subtitle">Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}</div>
+                            </div>
+                            <h3>A. Saldo Stok Terkini</h3>
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Kode</th>
+                                  <th>Nama Barang</th>
+                                  <th>Kategori</th>
+                                  <th>Lokasi Gudang</th>
+                                  <th class="text-right">Stok Aktif</th>
+                                  <th>Satuan</th>
+                                  <th class="text-right">Harga Satuan</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                ${stokItems.map(i => `
+                                  <tr>
+                                    <td>${i.kodeBarang}</td>
+                                    <td>${i.namaBarang}</td>
+                                    <td>${i.kategori}</td>
+                                    <td>${i.lokasiGudang}</td>
+                                    <td class="text-right">${i.stokQty}</td>
+                                    <td>${i.satuan}</td>
+                                    <td class="text-right">Rp ${i.hargaSatuan.toLocaleString('id-ID')}</td>
+                                  </tr>
+                                `).join('')}
+                              </tbody>
+                            </table>
+                            
+                            <h3 style="margin-top: 30px;">B. Histori Arus Transaksi (Ledger)</h3>
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Tanggal</th>
+                                  <th>Nama Barang</th>
+                                  <th>Tipe</th>
+                                  <th class="text-right">Jumlah</th>
+                                  <th>Petugas</th>
+                                  <th>Keterangan Keperluan</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                ${stokTransaksi.map(t => `
+                                  <tr>
+                                    <td>${t.tanggal}</td>
+                                    <td>${t.namaBarang}</td>
+                                    <td><span class="${t.tipe === 'Masuk' ? 'badge-in' : 'badge-out'}">${t.tipe === 'Masuk' ? 'MASUK (+)' : 'KELUAR (-)'}</span></td>
+                                    <td class="text-right">${t.jumlah}</td>
+                                    <td>${t.petugas}</td>
+                                    <td>${t.keterangan}</td>
+                                  </tr>
+                                `).join('')}
+                              </tbody>
+                            </table>
+                            <script>window.print();</script>
+                          </body>
+                        </html>
+                      `;
+                      win.document.write(htmlStr);
+                      win.document.close();
+                    }
+                  } catch (e) {
+                    alert('Gagal membuka halaman cetak.');
+                  }
+                }}
+                className="px-2.5 py-1.5 border border-slate-300 hover:bg-white bg-white/50 text-slate-650 hover:text-indigo-600 hover:shadow-xs rounded-xl font-bold cursor-pointer text-[10px] flex items-center gap-1.5 transition-all"
+              >
+                <Printer className="h-3.5 w-3.5" />
+                <span>Cetak Buku Stok</span>
+              </button>
+            </div>
+
+            <div className="bg-white border border-slate-150 rounded-xl overflow-hidden shadow-3xs">
+              <div className="overflow-y-auto max-h-72">
+                <table className="w-full text-left border-collapse text-[11px] font-sans">
+                  <thead>
+                    <tr className="bg-slate-100/80 border-b border-slate-150 text-slate-500 font-extrabold uppercase text-[9px] tracking-wider sticky top-0 bg-slate-55 shadow-inset z-10 p-2.5">
+                      <th className="p-3 w-24">Tanggal</th>
+                      <th className="p-3">Nama Barang</th>
+                      <th className="p-3 text-center w-24">Arah Transaksi</th>
+                      <th className="p-3 text-center w-20">Volume</th>
+                      <th className="p-3">Petugas Teknis</th>
+                      <th className="p-3">Catatan / Keperluan Dinas</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {stokTransaksi.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="p-6 text-center text-slate-400 italic">
+                          Belum ada transaksi keluar/masuk barang yang tercatat.
+                        </td>
+                      </tr>
+                    ) : (
+                      stokTransaksi.map((tx) => (
+                        <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="p-2.5 font-bold text-slate-500">
+                            {tx.tanggal}
+                          </td>
+                          <td className="p-2.5 font-extrabold text-slate-800">
+                            {tx.namaBarang}
+                          </td>
+                          <td className="p-2.5 text-center">
+                            <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md text-[9px] font-black ${
+                              tx.tipe === 'Masuk' 
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-150' 
+                                : 'bg-rose-50 text-rose-700 border border-rose-150'
+                            }`}>
+                              {tx.tipe === 'Masuk' ? 'MASUK (+)' : 'KELUAR (-)'}
+                            </span>
+                          </td>
+                          <td className="p-2.5 text-center font-black text-slate-800">
+                            {tx.jumlah}
+                          </td>
+                          <td className="p-2.5 font-extrabold text-slate-650">
+                            {tx.petugas}
+                          </td>
+                          <td className="p-2.5 text-slate-550 italic font-medium">
+                            {tx.keterangan || '-'}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* STOK BARANG DIALOG MODAL (TAMBAH / EDIT STOK) */}
+      {showStokModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-subtle flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full shadow-lg overflow-hidden animate-slide-up">
+            <div className="px-5 py-4 border-b border-slate-150 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                <ClipboardList className="h-4.5 w-4.5 text-indigo-605" />
+                <h3 className="font-extrabold text-[13px] text-slate-900 font-sans">
+                  {editingStok ? `Edit Data Barang Stok: ${editingStok.kodeBarang}` : 'Registrasi Barang Stok Baru'}
+                </h3>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setShowStokModal(false)}
+                className="h-7 w-7 rounded-lg hover:bg-slate-150 flex items-center justify-center text-slate-450 hover:text-slate-700 transition-colors cursor-pointer focus:outline-none"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStok} className="p-5 space-y-4 text-xs font-sans">
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Kode Barang *</label>
+                  <input
+                    type="text"
+                    required
+                    value={stokForm.kodeBarang}
+                    onChange={(e) => setStokForm({...stokForm, kodeBarang: e.target.value})}
+                    placeholder="Contoh: STK-ATK.0001"
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-bold font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Kategori Stok *</label>
+                  <select
+                    value={stokForm.kategori}
+                    onChange={(e) => setStokForm({...stokForm, kategori: e.target.value as any})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl cursor-pointer font-bold"
+                  >
+                    <option value="Alat Tulis Kantor (ATK)">Alat Tulis Kantor (ATK)</option>
+                    <option value="Bahan Material & Sipil">Bahan Material & Sipil</option>
+                    <option value="Suku Cadang & Elektrikal">Suku Cadang & Elektrikal</option>
+                    <option value="BBM & Pelumas">BBM & Pelumas</option>
+                    <option value="Perlengkapan Lapangan & K3">Perlengkapan Lapangan & K3</option>
+                    <option value="Kebutuhan Lainnya">Kebutuhan Lainnya</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-550 block">Nama Barang Habis Pakai *</label>
+                <input
+                  type="text"
+                  required
+                  value={stokForm.namaBarang}
+                  onChange={(e) => setStokForm({...stokForm, namaBarang: e.target.value})}
+                  placeholder="Ketikkan spesifikasi dan nama lengkap barang..."
+                  className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-bold text-[12px]"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Stok Awal</label>
+                  <input
+                    type="number"
+                    min={0}
+                    disabled={!!editingStok}
+                    value={stokForm.stokQty}
+                    onChange={(e) => setStokForm({...stokForm, stokQty: Number(e.target.value)})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-bold disabled:bg-slate-50 disabled:text-slate-400"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Satuan Takaran *</label>
+                  <input
+                    type="text"
+                    required
+                    value={stokForm.satuan}
+                    onChange={(e) => setStokForm({...stokForm, satuan: e.target.value})}
+                    placeholder="Rim, Sak, Liter..."
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Batas Menipis *</label>
+                  <input
+                    type="number"
+                    min={0}
+                    required
+                    value={stokForm.stokMinimal}
+                    onChange={(e) => setStokForm({...stokForm, stokMinimal: Number(e.target.value)})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-bold text-amber-600"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Lokasi Penyimpanan/Gudang</label>
+                  <input
+                    type="text"
+                    value={stokForm.lokasiGudang}
+                    onChange={(e) => setStokForm({...stokForm, lokasiGudang: e.target.value})}
+                    placeholder="Gudang Kantor, dll"
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Harga Satuan (Rp) *</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={stokForm.hargaSatuan}
+                    onChange={(e) => setStokForm({...stokForm, hargaSatuan: Number(e.target.value)})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-black"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-550 block">Keterangan / Catatan Inventaris</label>
+                <textarea
+                  rows={2}
+                  value={stokForm.keterangan}
+                  onChange={(e) => setStokForm({...stokForm, keterangan: e.target.value})}
+                  placeholder="Deskripsi singkat kegunaan atau logistik..."
+                  className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-slate-150 flex items-center justify-end gap-2 text-xs font-sans">
+                <button
+                  type="button"
+                  onClick={() => setShowStokModal(false)}
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-550 hover:bg-slate-50 transition-colors font-bold cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-colors shadow-3xs cursor-pointer"
+                >
+                  Simpan Barang
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* STOK TRANSAKSI DIALOG MODAL (MUTASI MASUK / KELUAR) */}
+      {showStokTxModal && selectedStokForTx && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-subtle flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-sm w-full shadow-lg overflow-hidden animate-slide-up">
+            <div className="px-5 py-4 border-b border-slate-150 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                {stokTxForm.tipe === 'Masuk' ? (
+                  <span className="p-1 px-2 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-black">STOK MASUK</span>
+                ) : (
+                  <span className="p-1 px-2 rounded-lg bg-rose-100 text-rose-700 text-[10px] font-black">MUTASI KELUAR</span>
+                )}
+                <h3 className="font-extrabold text-[13px] text-slate-800 font-sans">
+                  {selectedStokForTx.namaBarang}
+                </h3>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setShowStokTxModal(false)}
+                className="h-7 w-7 rounded-lg hover:bg-slate-150 flex items-center justify-center text-slate-450 hover:text-slate-700 transition-colors cursor-pointer focus:outline-none"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStokTx} className="p-5 space-y-4 text-xs font-sans">
+              
+              <div className="p-3 bg-indigo-50/50 border border-indigo-100 rounded-2xl flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Stok Saat Ini</p>
+                  <p className="text-sm font-black text-slate-800">{selectedStokForTx.stokQty} {selectedStokForTx.satuan}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Batas Minimum</p>
+                  <p className="text-sm font-black text-amber-600">{selectedStokForTx.stokMinimal} {selectedStokForTx.satuan}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Tipe Arah Logistik *</label>
+                  <select
+                    value={stokTxForm.tipe}
+                    onChange={(e) => setStokTxForm({...stokTxForm, tipe: e.target.value as any})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-bold text-slate-700 font-sans cursor-pointer"
+                  >
+                    <option value="Masuk">Masuk / Penambahan (+)</option>
+                    <option value="Keluar">Keluar / Pemakaian (-)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Jumlah Kuantitas ({selectedStokForTx.satuan}) *</label>
+                  <input
+                    type="number"
+                    required
+                    min={1}
+                    value={stokTxForm.jumlah}
+                    onChange={(e) => setStokTxForm({...stokTxForm, jumlah: Number(e.target.value)})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-black text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Tanggal Pencatatan *</label>
+                  <input
+                    type="date"
+                    required
+                    value={stokTxForm.tanggal}
+                    onChange={(e) => setStokTxForm({...stokTxForm, tanggal: e.target.value})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-550 block">Petugas Lapangan *</label>
+                  <select
+                    value={stokTxForm.petugas}
+                    onChange={(e) => setStokTxForm({...stokTxForm, petugas: e.target.value})}
+                    className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl text-slate-700 cursor-pointer"
+                  >
+                    <option value="">-- Pilih Staf --</option>
+                    {personaliaItems.map(p => (
+                      <option key={p.id} value={p.nama}>{p.nama}</option>
+                    ))}
+                    <option value="Operator Lapangan">Operator Lapangan PUPR</option>
+                    <option value="Bendahara Barang">Bendahara Barang UPTD</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-550 block">Catatan / Keperluan Dinas *</label>
+                <textarea
+                  required
+                  rows={2}
+                  value={stokTxForm.keterangan}
+                  onChange={(e) => setStokTxForm({...stokTxForm, keterangan: e.target.value})}
+                  placeholder="Sebutkan rincian rehab pilar pintu air, seksi tata usaha, pengadaan pihak ketiga, dsb..."
+                  className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-slate-150 flex items-center justify-end gap-2 text-xs font-sans">
+                <button
+                  type="button"
+                  onClick={() => setShowStokTxModal(false)}
+                  className="px-4 py-2 border border-slate-200 rounded-xl text-slate-550 hover:bg-slate-50 transition-colors font-bold cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-colors shadow-3xs cursor-pointer"
+                >
+                  Proses Transaksi Stok
+                </button>
+              </div>
+
+            </form>
+          </div>
         </div>
       )}
 
