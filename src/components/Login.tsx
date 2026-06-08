@@ -97,7 +97,7 @@ export default function Login({ onLoginSuccess, users, profileName }: LoginProps
 
           <div className="relative my-8 space-y-4">
             <p className="text-sm text-slate-300 leading-relaxed">
-              Selamat datang di portal administrasi internal <strong>UPTD Pengelolaan Sumber Daya Air (PSDA) Bah Bolon</strong>.
+              Selamat datang di portal administrasi internal <strong>{profileName}</strong>.
             </p>
             <div className="p-4 bg-white/5 rounded-xl border border-white/10 space-y-2">
               <div className="flex gap-2 items-start">
@@ -110,7 +110,7 @@ export default function Login({ onLoginSuccess, users, profileName }: LoginProps
           </div>
 
           <div className="relative text-xs text-slate-400 pt-6 border-t border-white/10">
-            Bidang Pengelolaan Sumber Daya Air Wilayah Sungai Bah Bolon
+            UPTD Pekerjaan Umum dan Penataan Ruang Pematangsiantar
           </div>
         </div>
 

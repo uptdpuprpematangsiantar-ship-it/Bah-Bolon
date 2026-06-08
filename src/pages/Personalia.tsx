@@ -65,6 +65,18 @@ export default function Personalia({
   onUpdateItem,
   onDeleteItem
 }: PersonaliaProps) {
+  // Load dynamic profile name from localStorage
+  const profileName = React.useMemo(() => {
+    try {
+      const saved = localStorage.getItem('siat_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.name) return parsed.name;
+      }
+    } catch (e) {}
+    return 'UPTD PUPR Pematangsiantar';
+  }, []);
+
   // Navigation Search & Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [filterGolongan, setFilterGolongan] = useState('ALL');
@@ -206,7 +218,7 @@ export default function Personalia({
         nama: 'Ir. Muhammad Sofyan, M.T.',
         nip: '197408222002121004',
         pangkatGolongan: 'IV/b',
-        jabatan: 'Kepala UPTD PSDA Bah Bolon',
+        jabatan: 'Kepala ' + profileName,
         tempatLahir: 'Medan',
         tanggalLahir: '1974-08-22',
         jenisKelamin: 'Laki-laki',
@@ -281,7 +293,7 @@ export default function Personalia({
     const htmlContent = `
       <html>
         <head>
-          <title>Daftar Aparatur & Pegawai - UPTD PSDA Bah Bolon</title>
+          <title>Daftar Aparatur & Pegawai - ${profileName}</title>
           <style>
             body { font-family: 'Inter', sans-serif; padding: 30px; color: #1e293b; }
             h2 { text-align: center; margin-bottom: 5px; text-transform: uppercase; }
@@ -297,7 +309,7 @@ export default function Personalia({
           </style>
         </head>
         <body onload="window.print()">
-          <h2>UPTD PSDA BAH BOLON</h2>
+          <h2>\${profileName.toUpperCase()}</h2>
           <h3>Daftar Administrasi Personalia & Kepegawaian (Daftar Urut Kepangkatan)</h3>
           <table>
             <thead>
@@ -379,7 +391,7 @@ export default function Personalia({
                 Kepegawaian & Personalia
               </h1>
               <p className="text-slate-550 text-xs mt-0.5 leading-relaxed">
-                Manajemen administrasi pegawai ASN, PPPK, dan tenaga Honorer UPTD PSDA Bah Bolon secara teratur.
+                Manajemen administrasi pegawai ASN, PPPK, dan tenaga Honorer {profileName} secara teratur.
               </p>
             </div>
           </div>

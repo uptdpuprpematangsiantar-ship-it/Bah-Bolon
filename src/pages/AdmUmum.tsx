@@ -40,6 +40,18 @@ interface AdmUmumProps {
 type TabType = 'surat_masuk' | 'surat_keluar';
 
 export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }: AdmUmumProps) {
+  // Load dynamic profile name from localStorage
+  const profileName = React.useMemo(() => {
+    try {
+      const saved = localStorage.getItem('siat_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.name) return parsed.name;
+      }
+    } catch (e) {}
+    return 'UPTD PUPR Pematangsiantar';
+  }, []);
+
   // Current sub-page tab
   const [activeTab, setActiveTab] = useState<TabType>('surat_masuk');
   
@@ -308,7 +320,7 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
     const printContent = `
       <html>
         <head>
-          <title>Buku Agenda ${activeTab === 'surat_masuk' ? 'Surat Masuk' : 'Surat Keluar'} - UPTD PSDA Bah Bolon</title>
+          <title>Buku Agenda ${activeTab === 'surat_masuk' ? 'Surat Masuk' : 'Surat Keluar'} - ${profileName}</title>
           <style>
             body { font-family: sans-serif; padding: 25px; font-size: 11px; color: #333; }
             h1 { text-align: center; text-transform: uppercase; font-size: 16px; margin-bottom: 5px; }
@@ -320,7 +332,7 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
         </head>
         <body onload="window.print()">
           <h1>Buku Agenda ${activeTab === 'surat_masuk' ? 'Surat Masuk' : 'Surat Keluar'}</h1>
-          <h2>UPTD PSDA Bah Bolon - Dinas Pekerjaan Umum Dan Penataan Ruang</h2>
+          <h2>${profileName}</h2>
           <p>Total Arsip Agenda: ${filteredItems.length} berkas</p>
           <table>
             <thead>
@@ -378,7 +390,7 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                 Administrasi Umum & Korespondensi
               </h1>
               <p className="text-slate-500 text-xs mt-0.5">
-                Portal Manajemen Surat Masuk, Surat Keluar, dan Buku Agenda Resmi UPTD PSDA Bah Bolon.
+                Portal Manajemen Surat Masuk, Surat Keluar, dan Buku Agenda Resmi {profileName}.
               </p>
             </div>
           </div>

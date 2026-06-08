@@ -78,7 +78,7 @@ export default function Keuangan({}: KeuanganProps) {
               </li>
               <li className="flex items-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-violet-600 mt-1.5 shrink-0" />
-                <span><strong>Sistem Kwitansi Digital</strong>: Pencatatan pengeluaran SPJ (Surat Pertanggungjawaban) kecil/operasional harian bagi bendahara pembantu seksi Bah Bolon.</span>
+                <span><strong>Sistem Kwitansi Digital</strong>: Pencatatan pengeluaran SPJ (Surat Pertanggungjawaban) kecil/operasional harian bagi bendahara pembantu seksi UPTD PUPR Pematangsiantar.</span>
               </li>
             </ul>
           </div>

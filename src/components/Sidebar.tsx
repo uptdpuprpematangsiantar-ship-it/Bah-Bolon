@@ -95,8 +95,8 @@ export default function Sidebar({
             <h2 className="text-base font-black tracking-tight text-sky-950 flex items-center gap-1.5">
               SIAT TERPADU
             </h2>
-            <p className="text-[10px] text-sky-850 truncate uppercase font-bold tracking-wider">
-              UPTD PSDA Bah Bolon
+            <p className="text-[10px] text-sky-850 truncate uppercase font-bold tracking-wider" title={profile.name}>
+              {profile.name}
             </p>
           </div>
         </div>

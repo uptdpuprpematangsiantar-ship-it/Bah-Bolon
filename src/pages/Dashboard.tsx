@@ -76,7 +76,7 @@ export default function Dashboard({ activeUser }: DashboardProps) {
               <div className="space-y-1.5 max-w-sm">
                 <p className="text-sm font-extrabold text-slate-800">Menunggu Permintaan Desain Anda</p>
                 <p className="text-xs text-slate-500 leading-relaxed text-center">
-                  Halaman ringkasan ini dapat diisi dengan widget analisis interaktif, charts perbandingan bulanan, atau pintasan pelaporan aktivitas seputar Bah Bolon.
+                  Halaman ringkasan ini dapat diisi dengan widget analisis interaktif, charts perbandingan bulanan, atau pintasan pelaporan aktivitas seputar UPTD PUPR Pematangsiantar.
                 </p>
               </div>
             </div>

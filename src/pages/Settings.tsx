@@ -549,7 +549,7 @@ export default function SettingsPage({
                     {editingUser ? 'Ubah Informasi Akun' : 'Daftarkan Akun Pengguna'}
                   </h3>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Definisikan perizinan seksi teknis di UPTD Bah Bolon
+                    Definisikan perizinan seksi teknis di {profile.name}
                   </p>
                 </div>
                 <button

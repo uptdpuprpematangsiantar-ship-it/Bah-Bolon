@@ -76,7 +76,7 @@ export default function Header({ profile, activeMenu, onMenuToggle }: HeaderProp
 
         <div className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs truncate">
           <Landmark className="h-3.5 w-3.5 text-sky-650 shrink-0 hidden sm:block" />
-          <span className="text-slate-550 font-bold uppercase tracking-wider hidden sm:block shrink-0">UPTD PSDA Bah Bolon</span>
+          <span className="text-slate-550 font-bold uppercase tracking-wider hidden sm:block shrink-0">{profile.name}</span>
           <ChevronRight className="h-3 w-3 text-slate-450 hidden sm:block shrink-0" />
           <span className="text-slate-800 font-extrabold tracking-wide max-w-[150px] sm:max-w-none truncate">
             {getBreadcrumb()}

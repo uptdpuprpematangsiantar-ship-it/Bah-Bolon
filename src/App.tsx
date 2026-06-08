@@ -54,6 +54,18 @@ export default function App() {
   // --- Persistent Storage State Initializers ---
   const [profile, setProfile] = useState<InstansiProfile>(() => {
     const saved = localStorage.getItem('siat_profile');
+    if (saved && (saved.includes('Bah Bolon') || saved.includes('UPTD PSDA'))) {
+      try {
+        const parsed = JSON.parse(saved);
+        parsed.name = 'UPTD PUPR Pematangsiantar';
+        parsed.footerText = 'Sistem Informasi Administrasi Terpadu UPTD Pekerjaan Umum dan Penataan Ruang Pematangsiantar';
+        parsed.copyrightText = '© 2026 UPTD PUPR Pematangsiantar. All Rights Reserved.';
+        localStorage.setItem('siat_profile', JSON.stringify(parsed));
+        return parsed;
+      } catch (e) {
+        return defaultProfile;
+      }
+    }
     return saved ? JSON.parse(saved) : defaultProfile;
   });
 
@@ -461,7 +473,7 @@ export default function App() {
               
               <h3 className="text-base font-extrabold text-white mb-2 tracking-tight">Konfirmasi Keluar</h3>
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
-                Apakah Anda yakin ingin keluar dari portal SIAT Terpadu UPTD PSDA Bah Bolon? Anda harus memasukkan kredensial kembali untuk mengakses data.
+                Apakah Anda yakin ingin keluar dari portal SIAT Terpadu {profile.name}? Anda harus memasukkan kredensial kembali untuk mengakses data.
               </p>
               
               <div className="flex items-center gap-3 w-full">
