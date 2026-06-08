@@ -79,13 +79,15 @@ export interface AdmUmumItem {
 
 export interface PersonaliaItem {
   id: string;
-  nip: string;
-  nama: string;
-  jabatan: string;
-  pangkatGolongan: string;
-  statusPegawai: 'PNS' | 'PPPK' | 'Honorer' | 'Magang';
-  noHp: string;
-  email: string;
+  nama: string;                // nama lengkap dan gelar akademik
+  nip: string;                 // nip
+  pangkatGolongan: string;     // pangkat dan golongan ruang (Honor, PPPK, I/a s.d IV/e)
+  jabatan: string;             // Jabatan
+  tempatLahir: string;         // Tempat lahir
+  tanggalLahir: string;        // tanggal lahir (terbaca otomatis dari NIP)
+  jenisKelamin: string;        // jenis kelamin
+  agama: string;               // agama
+  statusPerkawinan: string;    // status perkawinan
 }
 
 export interface AsetInventarisItem {
