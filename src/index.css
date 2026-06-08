@@ -1,0 +1,302 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- LIGHT MODE COMPACT GLOBAL TRANSLATION ENGINE --- */
+
+/* Primary Texts to Dark Slate color for perfect contrast */
+main, 
+main dt, 
+main h1, 
+main h2, 
+main h3, 
+main h4, 
+main h5,
+main p,
+main span,
+main button,
+main label,
+main input,
+main select,
+main textarea,
+main div,
+main td,
+main th,
+div[id*="modal"] h3,
+div[id*="modal"] p,
+div[id*="modal"] label,
+div[id*="modal"] button {
+  color: #1e293b; /* Slate 800 default */
+}
+
+/* Clear white override for active titles and emphasized lines */
+main h1, 
+main h2, 
+main h3, 
+main h4, 
+main h5, 
+main .text-white,
+main strong,
+main b,
+div[id*="modal"] h3,
+div[id*="modal"] .text-white {
+  color: #0f172a !important; /* Deep Slate 900 */
+}
+
+/* Standard Slate details colors */
+main .text-slate-100,
+main .text-slate-200,
+main .text-slate-300,
+main .text-slate-400,
+main .placeholder-slate-400 {
+  color: #475569 !important; /* Slate 600 */
+}
+
+main .text-slate-500,
+main .text-slate-600 {
+  color: #64748b !important; /* Slate 500 */
+}
+
+main .text-slate-650,
+main .text-slate-700 {
+  color: #334155 !important; /* Slate 700 */
+}
+
+/* Specific component overrides: Containers and Cards to clean white or slate-50 */
+main .bg-slate-900\/20, 
+main .bg-slate-900\/30, 
+main .bg-slate-900\/40, 
+main .bg-slate-900\/55, 
+main .bg-slate-900\/50, 
+main .bg-slate-900\/60,
+main .bg-slate-950\/80, 
+main .bg-slate-950\/50, 
+main .bg-slate-950\/40, 
+main .bg-slate-950\/20, 
+main .bg-slate-900, 
+main .bg-slate-950,
+main .bg-slate-800,
+main .bg-slate-750,
+main .bg-slate-800\/60,
+div[id*="modal-card"],
+div[id*="modal"] .bg-slate-900,
+div[id*="modal"] .bg-slate-950,
+div.bg-slate-900 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important; /* Slate 200 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Clean slate-50 background for secondary block components */
+main .bg-slate-950\/50,
+main .p-5.bg-slate-950\/50,
+main .bg-slate-950\/40,
+div[id*="modal"] .bg-slate-950 {
+  background-color: #f8fafc !important; /* Slate 50 */
+  border-color: #e2e8f0 !important;
+}
+
+/* Form inputs & selectivity styling */
+main input, 
+main select, 
+main textarea,
+div[id*="modal"] input,
+div[id*="modal"] select,
+div[id*="modal"] textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important; /* Slate 300 */
+}
+
+main input:focus, 
+main select:focus, 
+main textarea:focus,
+div[id*="modal-card"] input:focus {
+  border-color: #0284c7 !important; /* Sky 600 */
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15) !important;
+}
+
+/* Table rows & body aesthetics */
+main table, 
+main table tr, 
+main .divide-slate-850 {
+  border-color: #e2e8f0 !important;
+}
+
+main table thead tr,
+main table thead {
+  background-color: #f1f5f9 !important; /* Slate 100 header */
+}
+
+main table thead th {
+  color: #475569 !important; /* Slate 600 */
+  font-weight: 700 !important;
+}
+
+main table tbody tr {
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+main table tbody tr:hover {
+  background-color: #f8fafc !important; /* Slate 50 hover */
+}
+
+/* Active buttons & tabs conditions check */
+main button.bg-slate-950,
+main button.bg-slate-900 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+main button.bg-slate-950:hover,
+main button.bg-slate-900:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Highlight dynamic badge containers for perfect contrast on white */
+main .bg-sky-500\/10 {
+  background-color: #e0f2fe !important; /* Sky 100 */
+  color: #0369a1 !important; /* Sky 700 */
+  border-color: #bae6fd !important;
+}
+
+main .bg-emerald-500\/10,
+main .text-emerald-400 {
+  background-color: #d1fae5 !important; /* Emerald 100 */
+  color: #047857 !important; /* Emerald 700 */
+  border-color: #a7f3d0 !important;
+}
+
+main .bg-amber-500\/10,
+main .text-amber-500 {
+  background-color: #fef3c7 !important; /* Amber 100 */
+  color: #b45309 !important; /* Amber 700 */
+  border-color: #fde68a !important;
+}
+
+main .bg-rose-500\/10,
+main .bg-rose-600\/10,
+main .text-rose-450 {
+  background-color: #ffe4e6 !important; /* Rose 100 */
+  color: #be123c !important; /* Rose 700 */
+  border-color: #fecdd3 !important;
+}
+
+main .bg-purple-500\/10 {
+  background-color: #f3e8ff !important;
+  color: #7e22ce !important;
+  border-color: #e9d5ff !important;
+}
+
+main .bg-indigo-500\/10 {
+  background-color: #e0e7ff !important;
+  color: #4338ca !important;
+  border-color: #c7d2fe !important;
+}
+
+/* Dashboard welcome header banner design contrast tweak */
+main .relative.bg-gradient-to-r.from-sky-900 {
+  background-image: linear-gradient(to right, #0369a1, #1e3a8a, #0f172a) !important;
+  border: none !important;
+}
+
+main .relative.bg-gradient-to-r.from-sky-900 * {
+  color: #ffffff !important;
+}
+
+#dashboard-user-status-card {
+  background-color: #e0f2fe !important; /* light blue sky-100 */
+  border-color: #bae6fd !important; /* sky-200 */
+  box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.05), 0 2px 4px -1px rgba(2, 132, 199, 0.03) !important;
+}
+
+#dashboard-user-status-card * {
+  color: #0369a1 !important; /* text sky-700 / dark blue */
+}
+
+#dashboard-user-status-card .text-white,
+#dashboard-user-status-card svg {
+  color: #ffffff !important; /* Keep the SVG icon white */
+}
+
+main .relative.bg-gradient-to-r.from-sky-900 .text-sky-400,
+main .relative.bg-gradient-to-r.from-sky-900 .text-sky-300 {
+  color: #bae6fd !important;
+}
+
+main .relative.bg-gradient-to-r.from-sky-900 .bg-sky-500\/10 {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
+/* Border default values inside tables & list groupings */
+main .border-slate-850,
+main .border-slate-800,
+main .border-slate-900,
+div[id*="modal"] .border-slate-800,
+div[id*="modal"] .border-slate-850 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Dynamic dialog details logout backdrop overlays adjustments */
+div[id*="modal-overlay"],
+#logout-modal-overlay {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+#logout-modal-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+#logout-modal-card * {
+  color: #1e293b !important;
+}
+
+#logout-modal-card h3 {
+  color: #0f172a !important;
+}
+
+#logout-modal-card button#logout-modal-cancel-btn {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+}
+
+#logout-modal-card button#logout-modal-cancel-btn:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Forms labels and other secondary tags alignment */
+main label,
+div[id*="modal"] label {
+  color: #334155 !important; /* slate-700 */
+}
+
+/* Ensure the border layout dashed markers are clean */
+main .border-dashed {
+  border-color: #cbd5e1 !important;
+}
