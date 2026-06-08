@@ -1,6 +1,6 @@
 {
   "name": "SIAT UPTD PUPR Pematangsiantar",
   "description": "Sistem Informasi Administrasi Terpadu UPTD PUPR Pematangsiantar untuk penatausahaan, operasional, pembangunan, kepegawaian, aset, dan keuangan.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera", "geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

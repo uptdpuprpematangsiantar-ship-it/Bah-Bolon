@@ -97,6 +97,46 @@ export default function Operasional({
   // Interactive Embedded Map coordinates state
   const [activeCoordinates, setActiveCoordinates] = useState<string | null>(null);
 
+  // GPS state for automatic/manual device tracking
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState<string | null>(null);
+
+  const fetchDeviceLocation = (onSuccess?: (coords: string) => void) => {
+    if (!navigator.geolocation) {
+      setGpsError('Pencarian lokasi menggunakan GPS tidak didukung oleh browser Anda.');
+      return;
+    }
+    setGpsLoading(true);
+    setGpsError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(6);
+        const lng = position.coords.longitude.toFixed(6);
+        const coordsStr = `${lat}, ${lng}`;
+        if (onSuccess) {
+          onSuccess(coordsStr);
+        } else {
+          setBuildingForm(prev => ({ ...prev, koordinat: coordsStr }));
+        }
+        setGpsLoading(false);
+      },
+      (err) => {
+        console.warn('Geolocation error:', err);
+        let msg = 'Gagal mengambil koordinat lokasi perangkat Anda.';
+        if (err.code === 1) {
+          msg = 'Izin lokasi ditolak perangkat. Aktifkan lokasi di pengaturan browser.';
+        } else if (err.code === 2) {
+          msg = 'Posisi tidak terdeteksi. Pastikan GPS/Sinyal aktif.';
+        } else if (err.code === 3) {
+          msg = 'Waktu permintaan lokasi habis (Timeout).';
+        }
+        setGpsError(msg);
+        setGpsLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  };
+
   // Hidden references for inputs
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -228,7 +268,14 @@ export default function Operasional({
       koordinat: '',
       foto: '',
     });
+    setGpsError(null);
+    setGpsLoading(false);
     setShowBuildingFormModal(true);
+
+    // Otomatis update koordinat dengan lokasi perangkat
+    fetchDeviceLocation((coords) => {
+      setBuildingForm(prev => ({ ...prev, koordinat: coords }));
+    });
   };
 
   const openEditBuilding = (bld: BangunanIrigasi) => {
@@ -241,6 +288,8 @@ export default function Operasional({
       koordinat: bld.koordinat || '',
       foto: bld.foto || '',
     });
+    setGpsError(null);
+    setGpsLoading(false);
     setShowBuildingFormModal(true);
   };
 
@@ -1193,7 +1242,17 @@ export default function Operasional({
               </div>
 
               <div className="grid grid-cols-1 gap-1">
-                <label className="font-bold text-slate-550 block">Koordinat Lokasi yang Terintegrasi dengan Google Map</label>
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-slate-550 block">Koordinat Lokasi yang Terintegrasi dengan Google Map</label>
+                  <button
+                    type="button"
+                    onClick={() => fetchDeviceLocation()}
+                    disabled={gpsLoading}
+                    className="text-[10px] text-indigo-650 hover:text-indigo-850 font-black flex items-center gap-1 cursor-pointer transition-all disabled:opacity-50"
+                  >
+                    <span>{gpsLoading ? 'Mencari...' : '🔄 Sinkron GPS Perangkat'}</span>
+                  </button>
+                </div>
                 <input
                   type="text"
                   value={buildingForm.koordinat}
@@ -1201,6 +1260,21 @@ export default function Operasional({
                   placeholder="Contoh: 2.9463, 99.0438  (Latitude, Longitude)"
                   className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono"
                 />
+                {gpsError && (
+                  <p className="text-[10px] text-rose-600 font-medium pb-0.5">
+                    ⚠️ {gpsError}
+                  </p>
+                )}
+                {gpsLoading && (
+                  <p className="text-[10px] text-indigo-600 animate-pulse font-medium pb-0.5">
+                    ⏳ Sedang membaca posisi GPS terbaik dari perangkat Anda...
+                  </p>
+                )}
+                {!gpsError && !gpsLoading && buildingForm.koordinat && (
+                  <p className="text-[10px] text-emerald-600 font-bold flex items-center gap-0.5 pb-0.5">
+                    ✅ GPS Berhasil Terdeteksi &amp; Sinkron!
+                  </p>
+                )}
                 <p className="text-[9.5px] text-slate-400">
                   Koordinat ini terhubung otomatis untuk menampilkan peta satelit Google Map di aplikasi.
                 </p>
