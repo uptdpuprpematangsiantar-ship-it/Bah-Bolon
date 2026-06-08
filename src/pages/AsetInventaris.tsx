@@ -383,6 +383,7 @@ export default function AsetInventaris({
   // --- DISTRIBUSI MODAL / FORM ---
   const [showDistModal, setShowDistModal] = useState(false);
   const [editingDist, setEditingDist] = useState<DistribusiAset | null>(null);
+  const [distError, setDistError] = useState<string | null>(null);
 
   const [distForm, setDistForm] = useState({
     idAset: '',
@@ -396,6 +397,7 @@ export default function AsetInventaris({
 
   const openAddDist = () => {
     setEditingDist(null);
+    setDistError(null);
     setDistForm({
       idAset: items[0]?.id || '',
       penerima: personaliaItems[0]?.nama || '',
@@ -410,6 +412,7 @@ export default function AsetInventaris({
 
   const openEditDist = (dist: DistribusiAset) => {
     setEditingDist(dist);
+    setDistError(null);
     setDistForm({
       idAset: dist.idAset,
       penerima: dist.penerima,
@@ -434,6 +437,19 @@ export default function AsetInventaris({
   const saveDist = (e: React.FormEvent) => {
     e.preventDefault();
     if (!distForm.idAset || !distForm.penerima.trim()) return;
+
+    // Validation: Check if this asset already has an active, unreturned distribution
+    const isUnreturnedExist = distribusiList.some(item => 
+      item.idAset === distForm.idAset && 
+      item.statusDistribusi !== 'Dikembalikan' &&
+      (!editingDist || item.id !== editingDist.id)
+    );
+
+    // If there is an unresolved active distribution and the new/edited record itself of this asset is not set to 'Dikembalikan'
+    if (isUnreturnedExist && distForm.statusDistribusi !== 'Dikembalikan') {
+      setDistError("Gagal menyimpan! Aset ini saat ini sedang dialokasikan/dipinjam dan belum dikembalikan. Selesaikan atau ubah status catatan distribusi sebelumnya menjadi 'Telah Dikembalikan' terlebih dahulu.");
+      return;
+    }
 
     const selectedAsset = items.find(a => a.id === distForm.idAset);
     const labelAset = selectedAsset ? selectedAsset.namaAset : 'Aset Tak Dikenali';
@@ -1360,20 +1376,60 @@ export default function AsetInventaris({
 
             <form onSubmit={saveDist} className="p-5 space-y-4 text-xs font-sans">
               
+              {distError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 animate-shake">
+                  <div className="flex items-start gap-2 select-none">
+                    <AlertTriangle className="h-4 w-4 text-rose-500 shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-extrabold text-[12px]">Peringatan Distribusi</p>
+                      <p className="text-[11px] font-medium leading-relaxed mt-0.5">{distError}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-1">
                 <label className="font-bold text-slate-550 block">Pilih Aset KIB Terinventarisasi *</label>
                 <select
                   required
                   value={distForm.idAset}
-                  onChange={(e) => setDistForm({...distForm, idAset: e.target.value})}
-                  className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-bold"
+                  onChange={(e) => {
+                    setDistForm({...distForm, idAset: e.target.value});
+                    setDistError(null);
+                  }}
+                  className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-bold font-sans"
                 >
-                  {items.map(a => (
-                    <option key={a.id} value={a.id}>
-                      [{a.kodeAset}] - {a.namaAset} ({a.jumlah} Unit Tersedia)
-                    </option>
-                  ))}
+                  {items.map(a => {
+                    const isAssetUnreturned = distribusiList.some(
+                      d => d.idAset === a.id && d.statusDistribusi !== 'Dikembalikan'
+                    );
+                    return (
+                      <option key={a.id} value={a.id}>
+                        [{a.kodeAset}] - {a.namaAset} {isAssetUnreturned ? '⚠️ (Masih Dipakai/Belum Kembali)' : `(${a.jumlah} Unit Tersedia)`}
+                      </option>
+                    );
+                  })}
                 </select>
+
+                {(() => {
+                  const isAssetUnreturned = distribusiList.some(
+                    d => d.idAset === distForm.idAset && 
+                    d.statusDistribusi !== 'Dikembalikan' &&
+                    (!editingDist || d.id !== editingDist.id)
+                  );
+                  if (isAssetUnreturned) {
+                    return (
+                      <div className="p-2.5 bg-rose-50/50 border border-rose-150 rounded-xl text-rose-700 text-[11px] mt-1.5 flex flex-col gap-0.5 font-medium">
+                        <span className="font-bold text-rose-800 flex items-center gap-1">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          Aset Belum Kembali!
+                        </span>
+                        <span>Aset ini tercatat masih dalam status dipinjam/digunakan staf lain. Harap ubah catatan alur sebelumnya menjadi <b>Telah Dikembalikan</b> untuk melepas aset ini kembali.</span>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
 
               <div className="space-y-1">
@@ -1442,7 +1498,10 @@ export default function AsetInventaris({
                 <label className="font-bold text-slate-550 block">Status Penggunaan Aset *</label>
                 <select
                   value={distForm.statusDistribusi}
-                  onChange={(e) => setDistForm({...distForm, statusDistribusi: e.target.value as any})}
+                  onChange={(e) => {
+                    setDistForm({...distForm, statusDistribusi: e.target.value as any});
+                    setDistError(null);
+                  }}
                   className="w-full p-2 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded-xl font-medium"
                 >
                   <option value="Digunakan">Digunakan secara Eksklusif</option>
