@@ -1,6 +1,6 @@
 {
-  "name": "siat-uptd-psda",
-  "description": "Sistem Informasi Administrasi Terpadu UPTD PSDA Bah Bolon.",
+  "name": "SIAT UPTD PSDA Bah Bolon",
+  "description": "Sistem Informasi Administrasi Terpadu UPTD PSDA Bah Bolon untuk penatausahaan, operasional, pembangunan, kepegawaian, aset, dan keuangan.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
