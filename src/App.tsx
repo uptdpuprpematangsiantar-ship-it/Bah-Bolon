@@ -118,7 +118,7 @@ export default function App() {
 
   // --- Storage Clean Hard Reset on Mount ---
   useEffect(() => {
-    const isReset = localStorage.getItem('siat_storage_reset_v5');
+    const isReset = localStorage.getItem('siat_storage_reset_v6');
     if (!isReset) {
       localStorage.removeItem('siat_penatausahaan');
       localStorage.removeItem('siat_operasional');
@@ -128,7 +128,7 @@ export default function App() {
       localStorage.removeItem('siat_aset_inventaris');
       localStorage.removeItem('siat_keuangan');
       localStorage.removeItem('siat_daerah_irigasi');
-      localStorage.setItem('siat_storage_reset_v5', 'done');
+      localStorage.setItem('siat_storage_reset_v6', 'done');
 
       // Set state to empty lists immediately
       setPenatausahaan([]);
