@@ -317,6 +317,7 @@ export default function App() {
             onAddItem={handleAddPenatausahaan}
             onUpdateItem={handleUpdatePenatausahaan}
             onDeleteItem={handleDeletePenatausahaan}
+            personaliaItems={personalia}
           />
         );
       case 'adm_umum':

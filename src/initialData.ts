@@ -48,6 +48,91 @@ export const defaultPenatausahaan: PenatausahaanItem[] = [];
 export const defaultOperasional: OperasionalItem[] = [];
 export const defaultPembangunan: PembangunanItem[] = [];
 export const defaultAdmUmum: AdmUmumItem[] = [];
-export const defaultPersonalia: PersonaliaItem[] = [];
+export const defaultPersonalia: PersonaliaItem[] = [
+  {
+    id: 'st-sample-1',
+    nama: 'Ir. Muhammad Sofyan, M.T.',
+    nip: '197408222002121004',
+    pangkatGolongan: 'IV/b',
+    jabatan: 'Kepala UPTD PUPR Pematangsiantar',
+    tempatLahir: 'Medan',
+    tanggalLahir: '1974-08-22',
+    jenisKelamin: 'Laki-laki',
+    agama: 'Islam',
+    statusPerkawinan: 'Kawin'
+  },
+  {
+    id: 'st-sample-2',
+    nama: 'Rian Hidayat, S.T.',
+    nip: '198510252011011002',
+    pangkatGolongan: 'III/c',
+    jabatan: 'Kasi Operasional & Pemeliharaan',
+    tempatLahir: 'Pematangsiantar',
+    tanggalLahir: '1985-10-25',
+    jenisKelamin: 'Laki-laki',
+    agama: 'Islam',
+    statusPerkawinan: 'Kawin'
+  },
+  {
+    id: 'st-sample-3',
+    nama: 'Siti Rahma, M.Eng',
+    nip: '199104122019032014',
+    pangkatGolongan: 'III/b',
+    jabatan: 'Kasi Pembangunan & Rehabilitasi',
+    tempatLahir: 'Binjai',
+    tanggalLahir: '1991-04-12',
+    jenisKelamin: 'Perempuan',
+    agama: 'Islam',
+    statusPerkawinan: 'Kawin'
+  },
+  {
+    id: 'st-sample-4',
+    nama: 'Dewi Sartika, S.AP',
+    nip: '199308152021212005',
+    pangkatGolongan: 'PPPK',
+    jabatan: 'Analis Kepegawaian & Tata Usaha',
+    tempatLahir: 'Tebing Tinggi',
+    tanggalLahir: '1993-08-15',
+    jenisKelamin: 'Perempuan',
+    agama: 'Islam',
+    statusPerkawinan: 'Kawin'
+  },
+  {
+    id: 'st-sample-5',
+    nama: 'Heri Setiawan',
+    nip: '-',
+    pangkatGolongan: 'Honor',
+    jabatan: 'Mekanik & Penjaga Pintu Water Intake',
+    tempatLahir: 'Pematangsiantar',
+    tanggalLahir: '1996-12-18',
+    jenisKelamin: 'Laki-laki',
+    agama: 'Kristen Protestan',
+    statusPerkawinan: 'Belum Kawin'
+  },
+  {
+    id: 'st-sample-6',
+    nama: 'Budi Darmawan, A.Md.',
+    nip: '198805032015041001',
+    pangkatGolongan: 'II/c',
+    jabatan: 'Juru Gambar & Operator GIS',
+    tempatLahir: 'Medan',
+    tanggalLahir: '1988-05-03',
+    jenisKelamin: 'Laki-laki',
+    agama: 'Kristen Protestan',
+    statusPerkawinan: 'Kawin'
+  },
+  {
+    id: 'st-sample-7',
+    nama: 'Christina Wijaya, S.E.',
+    nip: '199011112018022003',
+    pangkatGolongan: 'PPPK',
+    jabatan: 'Bendahara Pengeluaran Pembantu',
+    tempatLahir: 'Pematangsiantar',
+    tanggalLahir: '1990-11-11',
+    jenisKelamin: 'Perempuan',
+    agama: 'Katolik',
+    statusPerkawinan: 'Kawin'
+  }
+];
 export const defaultAsetInventaris: AsetInventarisItem[] = [];
 export const defaultKeuangan: KeuanganItem[] = [];
