@@ -71,6 +71,10 @@ export interface AdmUmumItem {
   jenisSurat?: 'Surat Masuk' | 'Surat Keluar' | 'Dokumen Umum';
   asalSurat?: string; // Khusus Surat Masuk
   tujuanSurat?: string; // Khusus Surat Keluar
+  nomorSuratDiterima?: string; // Nomor Surat Asli yang diterima
+  tanggalSuratDiterima?: string; // Tanggal Surat Asli yang diterima
+  pdfUrl?: string; // Base64 PDF data or local blob
+  pdfName?: string; // Name of uploaded PDF file
 }
 
 export interface PersonaliaItem {

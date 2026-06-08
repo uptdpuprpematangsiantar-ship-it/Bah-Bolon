@@ -23,7 +23,10 @@ import {
   FileCheck,
   Building,
   ArrowUpDown,
-  Sparkles
+  Sparkles,
+  Upload,
+  Paperclip,
+  Eye
 } from 'lucide-react';
 import { AdmUmumItem } from '../types';
 
@@ -61,6 +64,65 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
   const [keterangan, setKeterangan] = useState('');
   const [asalSurat, setAsalSurat] = useState(''); // Only for Surat Masuk
   const [tujuanSurat, setTujuanSurat] = useState(''); // Only for Surat Keluar
+  const [nomorSuratDiterima, setNomorSuratDiterima] = useState('');
+  const [tanggalSuratDiterima, setTanggalSuratDiterima] = useState('');
+
+  // PDF Upload States
+  const [pdfUrl, setPdfUrl] = useState<string | undefined>(undefined);
+  const [pdfName, setPdfName] = useState<string | undefined>(undefined);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+
+  // PDF Preview States
+  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
+  const [previewPdfName, setPreviewPdfName] = useState<string>('');
+
+  // File Conversion and Handler Helpers
+  const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Pilih berkas dengan format PDF saja!');
+      return;
+    }
+
+    // Limit size check, e.g. 5MB to avoid local storage overflow
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Berkas PDF terlalu besar. Maksimal ukuran berkas yang diperbolehkan adalah 5MB.');
+      return;
+    }
+
+    setUploadingPdf(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPdfUrl(reader.result as string);
+      setPdfName(file.name);
+      setUploadingPdf(false);
+    };
+    reader.onerror = () => {
+      alert('Gagal mendigitalkan berkas PDF.');
+      setUploadingPdf(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDownloadPdf = (url: string, filename: string) => {
+    try {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Download failed', err);
+    }
+  };
+
+  const handlePreviewPdf = (url: string, filename: string) => {
+    setPreviewPdfUrl(url);
+    setPreviewPdfName(filename);
+  };
 
   // Pre-populate mock samples button helper
   const handleLoadSamples = () => {
@@ -75,7 +137,9 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
         lokasiFisik: 'Boks Masuk A1',
         keterangan: 'Tindak lanjut oleh Seksi OP untuk hadir pada 12 Juni 2026',
         jenisSurat: 'Surat Masuk',
-        asalSurat: 'Dinas PUPR Provinsi Sumatera Utara'
+        asalSurat: 'Dinas PUPR Provinsi Sumatera Utara',
+        nomorSuratDiterima: '005/7332/Sekrt/2026',
+        tanggalSuratDiterima: '2026-05-28'
       },
       {
         id: 'sample-m-2',
@@ -87,7 +151,9 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
         lokasiFisik: 'Kabinet Umum B3',
         keterangan: 'Sudah diproses ke bagian Kepegawaian',
         jenisSurat: 'Surat Masuk',
-        asalSurat: 'Badan Kepegawaian Daerah (BKD)'
+        asalSurat: 'Badan Kepegawaian Daerah (BKD)',
+        nomorSuratDiterima: '800/1042/BKD-PP/2026',
+        tanggalSuratDiterima: '2026-06-01'
       },
       {
         id: 'sample-k-1',
@@ -130,6 +196,10 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
     setKeterangan('');
     setAsalSurat('');
     setTujuanSurat('');
+    setNomorSuratDiterima('');
+    setTanggalSuratDiterima(new Date().toISOString().split('T')[0]);
+    setPdfUrl(undefined);
+    setPdfName(undefined);
     setIsModalOpen(true);
   };
 
@@ -145,6 +215,10 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
     setKeterangan(item.keterangan);
     setAsalSurat(item.asalSurat || '');
     setTujuanSurat(item.tujuanSurat || '');
+    setNomorSuratDiterima(item.nomorSuratDiterima || '');
+    setTanggalSuratDiterima(item.tanggalSuratDiterima || '');
+    setPdfUrl(item.pdfUrl);
+    setPdfName(item.pdfName);
     setIsModalOpen(true);
   };
 
@@ -163,7 +237,12 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
       lokasiFisik,
       keterangan,
       jenisSurat: activeTab === 'surat_masuk' ? 'Surat Masuk' : 'Surat Keluar',
-      ...(activeTab === 'surat_masuk' ? { asalSurat } : { tujuanSurat })
+      ...(activeTab === 'surat_masuk' 
+        ? { asalSurat, nomorSuratDiterima, tanggalSuratDiterima } 
+        : { tujuanSurat }
+      ),
+      pdfUrl,
+      pdfName
     };
 
     if (editingItem) {
@@ -247,8 +326,8 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
             <thead>
               <tr>
                 <th style="width: 5%">No</th>
-                <th style="width: 15%">Tanggal</th>
-                <th style="width: 20%">Nomor Surat</th>
+                <th style="width: 12%">Tanggal</th>
+                <th style="width: 23%">Agenda & Detail Surat</th>
                 <th style="width: 20%">${activeTab === 'surat_masuk' ? 'Asal Surat' : 'Tujuan Surat'}</th>
                 <th style="width: 25%">Perihal / Hal</th>
                 <th style="width: 15%">Klasifikasi</th>
@@ -259,7 +338,15 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                 <tr>
                   <td>${idx + 1}</td>
                   <td>${item.tanggalArsip}</td>
-                  <td><strong>${item.nomorSurat}</strong></td>
+                  <td>
+                    <strong>No. Agenda: ${item.nomorSurat}</strong>
+                    ${item.jenisSurat === 'Surat Masuk' && item.nomorSuratDiterima ? `
+                      <div style="font-size: 10px; color: #555; margin-top: 4px; line-height: 1.3;">
+                        No. Asli: ${item.nomorSuratDiterima}<br/>
+                        Tgl. Asli: ${item.tanggalSuratDiterima || '-'}
+                      </div>
+                    ` : ''}
+                  </td>
                   <td>${activeTab === 'surat_masuk' ? (item.asalSurat || '-') : (item.tujuanSurat || '-')}</td>
                   <td>${item.namaDokumen}</td>
                   <td>${item.klasifikasi}</td>
@@ -489,7 +576,7 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                 sortBy === 'nomor' ? 'bg-violet-50 text-violet-700 font-bold' : 'bg-white text-slate-600 hover:bg-slate-50'
               }`}
             >
-              <span>Nomor Surat</span>
+              <span>Agenda Surat</span>
               {sortBy === 'nomor' && (
                 <span className="text-[9px]">{sortOrder === 'asc' ? '▲' : '▼'}</span>
               )}
@@ -545,7 +632,7 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
           <div className="divide-y divide-slate-150">
             {/* Table Header for medium screens and above */}
             <div className="hidden md:grid md:grid-cols-12 gap-4 px-6 py-3.5 bg-slate-50 border-b border-slate-150 text-[10px] uppercase font-black text-slate-450 tracking-wider">
-              <div className="col-span-3">Nomor Surat / Agenda</div>
+              <div className="col-span-3">Agenda Surat</div>
               <div className="col-span-4">Perihal (Hal) & Klasifikasi</div>
               <div className="col-span-2">{activeTab === 'surat_masuk' ? 'Pengirim (Asal)' : 'Tujuan (Ke)'}</div>
               <div className="col-span-1 text-center">Status</div>
@@ -559,14 +646,34 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                 className="p-5 md:px-6 md:py-4.5 hover:bg-slate-50 transition-colors grid grid-cols-1 md:grid-cols-12 gap-3.5 md:gap-4 items-center"
               >
                 {/* 1. File description/numbers */}
-                <div className="col-span-1 md:col-span-3 space-y-1">
-                  <div className="flex items-center gap-1.5">
+                <div className="col-span-1 md:col-span-3 space-y-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] font-semibold text-slate-450">No. Agenda:</span>
                     <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 border border-slate-200 px-1 py-0.5 rounded-sm">
                       {item.nomorSurat}
                     </span>
                   </div>
+
+                  {/* Info Surat Asli Diterima khusus Surat Masuk */}
+                  {item.jenisSurat === 'Surat Masuk' && (item.nomorSuratDiterima || item.tanggalSuratDiterima) && (
+                    <div className="p-1.5 bg-slate-50 border border-slate-150 rounded-lg text-[10px] text-slate-650 space-y-0.5">
+                      {item.nomorSuratDiterima && (
+                        <div className="leading-tight">
+                          <span className="text-slate-450 font-bold">No. Surat:</span>{' '}
+                          <span className="font-mono font-black text-slate-800 break-all">{item.nomorSuratDiterima}</span>
+                        </div>
+                      )}
+                      {item.tanggalSuratDiterima && (
+                        <div className="leading-tight">
+                          <span className="text-slate-450 font-bold">Tgl. Surat:</span>{' '}
+                          <span className="font-bold text-slate-850">{item.tanggalSuratDiterima}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="flex items-center gap-2 text-[11px] text-slate-450">
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1" title="Tanggal Registrasi / Agenda">
                       <Calendar className="h-3 w-3 shrink-0" />
                       <span>{item.tanggalArsip}</span>
                     </span>
@@ -583,7 +690,7 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                   <h4 className="text-xs font-bold text-slate-800 leading-normal">
                     {item.namaDokumen}
                   </h4>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-violet-50 text-violet-700 border border-violet-100">
                       {item.klasifikasi}
                     </span>
@@ -593,6 +700,41 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                       </span>
                     )}
                   </div>
+                  {item.pdfUrl && (
+                    <div className="flex items-center gap-1.5 bg-rose-50/75 text-rose-700 border border-rose-100 px-2 py-1 rounded-lg text-[10px] font-bold w-full sm:w-fit mt-1 shadow-3xs">
+                      <Paperclip className="h-3 w-3 text-rose-650 shrink-0" />
+                      <span className="truncate max-w-[130px] sm:max-w-[170px] text-rose-800" title={item.pdfName || 'Dokumen.pdf'}>
+                        {item.pdfName || 'Dokumen.pdf'}
+                      </span>
+                      <div className="flex items-center gap-1.5 pl-2 border-l border-rose-200 ml-auto sm:ml-0">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePreviewPdf(item.pdfUrl!, item.pdfName || 'Dokumen.pdf');
+                          }}
+                          className="hover:text-rose-955 hover:underline transition-all flex items-center gap-0.5 font-extrabold text-rose-700 cursor-pointer shrink-0"
+                          title="Pratinjau Dokumen PDF"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          <span>Buka</span>
+                        </button>
+                        <span className="text-rose-200">/</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadPdf(item.pdfUrl!, item.pdfName || 'Dokumen.pdf');
+                          }}
+                          className="hover:text-rose-955 hover:underline transition-all flex items-center gap-0.5 font-extrabold text-rose-700 cursor-pointer shrink-0"
+                          title="Unduh Dokumen PDF"
+                        >
+                          <Download className="h-3 w-3" />
+                          <span>Unduh</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* 3. Sender / Receiver profile */}
@@ -694,9 +836,9 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
             {/* Form layout wrapper */}
             <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 text-xs">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 1. Nomor Surat */}
+                {/* 1. Nomor Surat / Agenda */}
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1.5">Nomor Surat / Agenda Resmi <span className="text-rose-500">*</span></label>
+                  <label className="block text-slate-700 font-bold mb-1.5">Agenda Surat <span className="text-rose-500">*</span></label>
                   <input
                     id="input-nomor-surat"
                     type="text"
@@ -708,9 +850,9 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                   />
                 </div>
 
-                {/* 2. Tanggal Surat */}
+                {/* 2. Tanggal Registrasi / Agenda */}
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1.5">Tanggal Surat / Terima <span className="text-rose-500">*</span></label>
+                  <label className="block text-slate-700 font-bold mb-1.5">Tanggal Registrasi / Agenda <span className="text-rose-500">*</span></label>
                   <input
                     id="input-tanggal-arsip"
                     type="date"
@@ -724,17 +866,50 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
 
               {/* 3. Sender/Receiver Profile based on active tab state */}
               {activeTab === 'surat_masuk' ? (
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1.5">Instansi Pengirim (Asal Surat) <span className="text-rose-500">*</span></label>
-                  <input
-                    id="input-asal-surat"
-                    type="text"
-                    required
-                    placeholder="Contoh: Dinas PUPR Provinsi Sumatera Utara"
-                    value={asalSurat}
-                    onChange={(e) => setAsalSurat(e.target.value)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-violet-500 text-slate-800 font-semibold"
-                  />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1.5">Instansi Pengirim (Asal Surat) <span className="text-rose-500">*</span></label>
+                    <input
+                      id="input-asal-surat"
+                      type="text"
+                      required
+                      placeholder="Contoh: Dinas PUPR Provinsi Sumatera Utara"
+                      value={asalSurat}
+                      onChange={(e) => setAsalSurat(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-violet-500 text-slate-800 font-semibold"
+                    />
+                  </div>
+
+                  {/* Fields for original incoming paper number and date */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-l-3 border-violet-500 pl-3 bg-violet-50/40 p-4 rounded-2xl">
+                    <div className="col-span-1 md:col-span-2">
+                      <h4 className="font-bold text-xs text-violet-850">Detail Surat Fisik yang Diterima</h4>
+                      <p className="text-[10px] text-slate-400">Silakan masukkan nomor dan tanggal surat dari instansi asal pengirim.</p>
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 font-semibold mb-1">Nomor Surat yang Diterima <span className="text-rose-500">*</span></label>
+                      <input
+                        id="input-nomor-surat-diterima"
+                        type="text"
+                        required={activeTab === 'surat_masuk'}
+                        placeholder="Contoh: 005/12/PSDA/V/2026"
+                        value={nomorSuratDiterima}
+                        onChange={(e) => setNomorSuratDiterima(e.target.value)}
+                        className="w-full p-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-violet-500 text-slate-800 font-mono text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 font-semibold mb-1">Tanggal Surat yang Diterima <span className="text-rose-500">*</span></label>
+                      <input
+                        id="input-tanggal-surat-diterima"
+                        type="date"
+                        required={activeTab === 'surat_masuk'}
+                        value={tanggalSuratDiterima}
+                        onChange={(e) => setTanggalSuratDiterima(e.target.value)}
+                        className="w-full p-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-violet-500 text-slate-800 text-xs"
+                      />
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div>
@@ -841,6 +1016,70 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                 />
               </div>
 
+              {/* PDF Document Upload Area */}
+              <div>
+                <label className="block text-slate-700 font-bold mb-1.5 flex items-center justify-between">
+                  <span>Unggah Berkas PDF (Opsional)</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Format: *.pdf (Maks. 5MB)</span>
+                </label>
+                
+                {pdfUrl ? (
+                  /* Shows when a PDF is already uploaded */
+                  <div className="p-3 bg-violet-50/70 border border-violet-100 rounded-2xl flex items-center justify-between shadow-3xs">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="h-9 w-9 rounded-xl bg-violet-600/10 border border-violet-600/20 text-violet-700 flex items-center justify-center shrink-0">
+                        <FileText className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 font-sans">
+                        <p className="text-slate-850 font-black truncate pr-2 leading-tight text-xs">{pdfName || 'Dokumen_Lampiran.pdf'}</p>
+                        <p className="text-[9px] text-emerald-600 font-extrabold flex items-center gap-1 mt-0.5">
+                          <span>✓ Berkas PDF Siap</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadPdf(pdfUrl, pdfName || 'Dokumen_Lampiran.pdf')}
+                        className="px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-50 text-[10px] cursor-pointer"
+                      >
+                        Pratinjau / Unduh
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPdfUrl(undefined);
+                          setPdfName(undefined);
+                        }}
+                        className="px-2.5 py-1.5 bg-rose-50 text-rose-700 font-bold rounded-lg hover:bg-rose-100 text-[10px] cursor-pointer"
+                      >
+                        Hapus
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Shows file dropzone upload form */
+                  <div className="relative border border-dashed border-slate-300 hover:border-violet-400 bg-slate-50/50 hover:bg-violet-50/10 rounded-2xl p-4 transition-all text-center group cursor-pointer">
+                    <input
+                      id="upload-pdf-file"
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handlePdfChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                    />
+                    <div className="space-y-1">
+                      <Upload className="h-6 w-6 text-slate-400 group-hover:text-violet-600 mx-auto transition-colors" />
+                      <p className="text-slate-750 font-black block text-xs">
+                        {uploadingPdf ? 'Sedang Membaca Berkas...' : 'Seret & Lepas Berkas PDF'}
+                      </p>
+                      <p className="text-slate-400 text-[10px] leading-normal">
+                        Ketik nama berkas di komputer atau klik area ini untuk memindai dokumen fisik naskah dinas.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Action buttons */}
               <div className="flex items-center gap-2.5 pt-4 border-t border-slate-100">
                 <button
@@ -860,6 +1099,65 @@ export default function AdmUmum({ items, onAddItem, onUpdateItem, onDeleteItem }
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* PDF Pratinjau Full Modal */}
+      {previewPdfUrl && (
+        <div id="pdf-preview-modal-overlay" className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs text-xs">
+          <div id="pdf-preview-modal-card" className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col h-[85vh]">
+            <div className="p-4.5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="h-8 w-8 rounded-lg bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center font-black text-xs shrink-0 select-none">
+                  PDF
+                </div>
+                <div className="min-w-0 font-sans">
+                  <h4 className="font-extrabold text-slate-800 text-xs truncate max-w-[250px] sm:max-w-md">{previewPdfName}</h4>
+                  <p className="text-[10px] text-slate-400">Pratinjau Resmi Naskah Dinas Lampiran</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleDownloadPdf(previewPdfUrl, previewPdfName)}
+                  className="px-3.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-750 text-white font-heavy transition-all flex items-center gap-1.5 cursor-pointer text-xs shadow-xs"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Unduh Dokumen</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewPdfUrl(null)}
+                  className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-705 transition-all cursor-pointer"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="flex-1 bg-slate-100 p-3 flex items-center justify-center overflow-hidden">
+              <object
+                data={previewPdfUrl}
+                type="application/pdf"
+                className="w-full h-full rounded-2xl border border-slate-250 shadow-inner"
+              >
+                <div className="text-center p-8 bg-white rounded-2xl border border-slate-200 max-w-sm space-y-4 shadow-sm mx-auto">
+                  <div className="text-amber-500 font-bold text-sm">Pratinjau Lampiran Terbuka</div>
+                  <p className="text-slate-500 text-xs leading-relaxed">
+                    Browser atau lingkungan iFrame Anda tidak mendukung penampilan PDF terintegrasi. Anda dapat mengunduh dokumen secara langsung dengan aman.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadPdf(previewPdfUrl, previewPdfName)}
+                    className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Download PDF Direct</span>
+                  </button>
+                </div>
+              </object>
+            </div>
           </div>
         </div>
       )}
