@@ -255,40 +255,41 @@ export default function Penatausahaan({ personaliaItems = [] }: PenatausahaanPro
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main 4-Column Demographic Layout */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch w-full">
             
-            {/* COLUMN 1 & 2: Pangkatan and Broad Group Statistics */}
-            <div className="lg:col-span-2 space-y-6">
-              
-              {/* Box 1: Pangkat Broad Categories */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs space-y-4">
+            {/* COLUMN 1: Bagan Distribusi Tingkat, Pangkat & Golongan */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs flex flex-col h-full justify-between space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="h-4.5 w-4.5 text-violet-600" />
-                    <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm">Bagan Distribusi Tingkat, Pangkat & Golongan</h3>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <BarChart3 className="h-4 w-4 text-violet-600 shrink-0" />
+                    <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm truncate">Tingkat & Golongan</h3>
                   </div>
-                  <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg uppercase tracking-wider">Persentase (%)</span>
+                  <span className="text-[9px] font-black text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md uppercase tracking-wide shrink-0">%</span>
                 </div>
 
-                <div className="space-y-4 pt-1">
+                <div className="space-y-3.5 pt-1">
                   {pangkatSummary.groups.map((group) => {
                     const widthPercent = Math.max(2, Math.round((group.count / totalCount) * 100));
                     return (
-                      <div key={group.id} className="space-y-1.5 group">
+                      <div key={group.id} className="space-y-1 group">
                         <div className="flex items-center justify-between text-xs font-bold text-slate-705">
-                          <div className="flex items-center gap-2">
-                            <span className={`inline-flex px-1.5 py-0.5 rounded text-[9px] font-black tracking-tighter ${group.text} ${group.bg}`}>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className={`inline-flex px-1 rounded text-[8px] font-black tracking-tighter ${group.text} ${group.bg} shrink-0`}>
                               {group.id}
                             </span>
-                            <span className="text-slate-800 text-[11px] font-extrabold">{group.label}</span>
+                            <span className="text-slate-800 text-[10px] font-extrabold truncate" title={group.label}>
+                              {group.label.replace('PNS Golongan ', 'Gol. ')}
+                            </span>
                           </div>
-                          <div className="flex items-center gap-1 text-slate-905">
+                          <div className="flex items-center gap-0.5 text-slate-905 ml-1 shrink-0 font-extrabold text-[10px]">
                             <span className="text-xs font-black">{group.count}</span>
-                            <span className="text-slate-400 text-[10px] font-semibold">({widthPercent}%)</span>
+                            <span className="text-slate-400 text-[9px] font-medium">({widthPercent}%)</span>
                           </div>
                         </div>
                         {/* Progressive Fill Bar */}
-                        <div className="h-2 rounded-full bg-slate-100 overflow-hidden relative">
+                        <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden relative">
                           <div
                             style={{ width: `${widthPercent}%` }}
                             className={`h-full ${group.color} transition-all duration-700 ease-out`}
@@ -299,18 +300,20 @@ export default function Penatausahaan({ personaliaItems = [] }: PenatausahaanPro
                   })}
                 </div>
               </div>
+            </div>
 
-              {/* Box 2: Detail breakdowns (PNS Detailed lists) */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs space-y-4">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <Award className="h-4.5 w-4.5 text-teal-600" />
-                  <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm">Rincian Detail Golongan Ruang Internal</h3>
+            {/* COLUMN 2: Rincian Detail Golongan Ruang Internal */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs flex flex-col h-full justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
+                  <Award className="h-4 w-4 text-teal-600 shrink-0" />
+                  <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm truncate font-sans">Detail Golongan</h3>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+                <div className="grid grid-cols-2 gap-2 pt-1">
                   {Object.keys(pangkatSummary.details).length === 0 ? (
                     <div className="col-span-full py-6 text-center text-slate-400 text-xs">
-                      Tidak ada rincian golongan khusus.
+                      Tidak ada rincian.
                     </div>
                   ) : (
                     Object.keys(pangkatSummary.details).map((key) => {
@@ -318,19 +321,18 @@ export default function Penatausahaan({ personaliaItems = [] }: PenatausahaanPro
                       const pct = Math.round((value / totalCount) * 100);
                       
                       let accentClass = "border-slate-100 text-slate-705 bg-slate-50/50";
-                      if (key === 'Honor') accentClass = "border-blue-100 text-blue-750 bg-blue-50/30";
-                      else if (key === 'PPPK') accentClass = "border-emerald-100 text-emerald-750 bg-emerald-50/30";
-                      else if (key.startsWith('IV/')) accentClass = "border-teal-100 text-teal-750 bg-teal-50/30";
-                      else if (key.startsWith('III/')) accentClass = "border-sky-100 text-sky-750 bg-sky-50/30";
-                      else if (key.startsWith('II/')) accentClass = "border-violet-100 text-violet-750 bg-violet-50/30";
+                      if (key === 'Honor') accentClass = "border-amber-100 text-amber-750 bg-amber-50/10";
+                      else if (key === 'PPPK') accentClass = "border-emerald-100 text-emerald-750 bg-emerald-50/10";
+                      else if (key.startsWith('IV/')) accentClass = "border-teal-100 text-teal-750 bg-teal-50/10";
+                      else if (key.startsWith('III/')) accentClass = "border-sky-100 text-sky-750 bg-sky-50/10";
+                      else if (key.startsWith('II/')) accentClass = "border-violet-100 text-violet-750 bg-violet-50/10";
 
                       return (
-                        <div key={key} className={`border p-3.5 rounded-2xl text-center space-y-1 shadow-3xs ${accentClass}`}>
-                          <p className="font-black text-sm tracking-tight">{key}</p>
-                          <p className="text-[10px] text-slate-400 font-medium">Terdaftar</p>
-                          <div className="pt-1.5 flex items-baseline justify-center gap-1.5">
-                            <span className="text-base font-black leading-none">{value}</span>
-                            <span className="text-[10px] font-bold text-slate-400">({pct}%)</span>
+                        <div key={key} className={`border p-2 rounded-xl text-center space-y-0.5 shadow-3xs ${accentClass}`}>
+                          <p className="font-black text-xs tracking-tight">{key}</p>
+                          <div className="flex items-baseline justify-center gap-0.5">
+                            <span className="text-xs font-black leading-none">{value}</span>
+                            <span className="text-[9px] font-semibold text-slate-400">({pct}%)</span>
                           </div>
                         </div>
                       );
@@ -338,24 +340,19 @@ export default function Penatausahaan({ personaliaItems = [] }: PenatausahaanPro
                   )}
                 </div>
               </div>
-
             </div>
 
-            {/* COLUMN 3: Gender proportions & Religion Diversity */}
-            <div className="space-y-6">
-              
-              {/* Box 3: Gender proportions with Circular Ring */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <PieChart className="h-4.5 w-4.5 text-sky-600" />
-                    <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm">Proporsi Jenis Kelamin</h3>
-                  </div>
+            {/* COLUMN 3: Proporsi Jenis Kelamin */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs flex flex-col h-full justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
+                  <PieChart className="h-4 w-4 text-sky-600 shrink-0" />
+                  <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm truncate">Proporsi Gender</h3>
                 </div>
 
                 {/* SVG Doughnut ring chart */}
-                <div className="flex flex-col items-center py-3.5 space-y-4">
-                  <div className="relative h-28 w-28 flex items-center justify-center">
+                <div className="flex flex-col items-center py-1 space-y-3">
+                  <div className="relative h-24 w-24 flex items-center justify-center">
                     <svg className="h-full w-full -rotate-90" viewBox="0 0 80 80">
                       {/* Empty state or Female track */}
                       <circle
@@ -384,58 +381,60 @@ export default function Penatausahaan({ personaliaItems = [] }: PenatausahaanPro
 
                     {/* Center stats summary text */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center space-y-0.5 pointer-events-none select-none">
-                      <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Rasio Pria</span>
-                      <p className="text-lg font-black text-slate-800 leading-none">{genderSummary.malePercent}%</p>
+                      <span className="text-[8px] uppercase font-bold text-slate-450 tracking-wider">Pria</span>
+                      <p className="text-base font-black text-slate-800 leading-none">{genderSummary.malePercent}%</p>
                     </div>
                   </div>
 
-                  {/* Interactive Legends Map */}
-                  <div className="w-full grid grid-cols-2 gap-3 pt-2 text-xs">
+                  {/* Legends Stacked Map */}
+                  <div className="w-full flex flex-col gap-1.5 pt-1 text-xs">
                     {/* Male legend */}
-                    <div className="bg-sky-50/50 border border-sky-100 p-2.5 rounded-2xl flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-sky-600 shrink-0" />
-                      <div>
-                        <p className="text-[10px] font-bold text-slate-450 leading-none">Laki-laki</p>
-                        <p className="font-extrabold text-slate-800 mt-1 leading-none">{genderSummary.male} <span className="text-[9px] font-bold text-slate-450">Staf</span></p>
-                        <p className="text-[9px] font-black text-sky-700 mt-1">({genderSummary.malePercent}%)</p>
+                    <div className="bg-sky-50/50 border border-sky-100 px-2.5 py-1 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div className="h-2 w-2 rounded-full bg-sky-600 shrink-0" />
+                        <span className="text-[10px] font-bold text-slate-500 truncate">Laki-laki</span>
                       </div>
+                      <span className="font-black text-slate-800 text-[11px] shrink-0">
+                        {genderSummary.male} <span className="text-[9px] font-bold text-sky-700">({genderSummary.malePercent}%)</span>
+                      </span>
                     </div>
 
                     {/* Female legend */}
-                    <div className="bg-rose-50/50 border border-rose-100 p-2.5 rounded-2xl flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
-                      <div>
-                        <p className="text-[10px] font-bold text-slate-450 leading-none">Perempuan</p>
-                        <p className="font-extrabold text-slate-800 mt-1 leading-none">{genderSummary.female} <span className="text-[9px] font-bold text-slate-450">Staf</span></p>
-                        <p className="text-[9px] font-black text-rose-700 mt-1">({genderSummary.femalePercent}%)</p>
+                    <div className="bg-rose-50/50 border border-rose-100 px-2.5 py-1 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
+                        <span className="text-[10px] font-bold text-slate-500 truncate">Perempuan</span>
                       </div>
+                      <span className="font-black text-slate-800 text-[11px] shrink-0">
+                        {genderSummary.female} <span className="text-[9px] font-bold text-rose-700">({genderSummary.femalePercent}%)</span>
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Box 4: Religions Share */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="h-4.5 w-4.5 text-emerald-600" />
-                    <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm">Keragaman Keyakinan & Agama</h3>
-                  </div>
+            {/* COLUMN 4: Keragaman Keyakinan & Agama */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-2xs flex flex-col h-full justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
+                  <BookOpen className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm truncate">Sebaran Agama</h3>
                 </div>
 
-                <div className="space-y-3 pt-1">
+                <div className="space-y-2.5 pt-1">
                   {religionSummary.map((item) => {
                     const barWidth = Math.max(3, item.percent);
                     return (
                       <div key={item.name} className="space-y-1">
                         <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
-                          <span className="truncate max-w-[150px]">{item.name}</span>
-                          <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-black ${item.badgeColor}`}>
-                            {item.count} <span className="text-[9px] font-medium ml-1">({item.percent}%)</span>
+                          <span className="truncate max-w-[110px]" title={item.name}>{item.name}</span>
+                          <span className={`inline-flex px-1.5 py-0.5 rounded text-[9px] font-black shrink-0 ${item.badgeColor}`}>
+                            {item.count} <span className="text-[8px] font-medium ml-0.5">({item.percent}%)</span>
                           </span>
                         </div>
                         {/* Progress meter */}
-                        <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                           <div
                             style={{ width: `${barWidth}%` }}
                             className={`h-full ${item.color} transition-all duration-750 ease-out`}
@@ -446,7 +445,6 @@ export default function Penatausahaan({ personaliaItems = [] }: PenatausahaanPro
                   })}
                 </div>
               </div>
-
             </div>
 
           </div>
