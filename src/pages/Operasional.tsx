@@ -37,6 +37,7 @@ interface OperasionalProps {
   onDeleteItem: (id: string) => void;
   daerahIrigasiItems: DaerahIrigasi[];
   onUpdateDaerahIrigasi: (items: DaerahIrigasi[]) => void;
+  defaultTab?: 'tma' | 'irigasi';
 }
 
 export default function Operasional({
@@ -45,10 +46,15 @@ export default function Operasional({
   onUpdateItem,
   onDeleteItem,
   daerahIrigasiItems = [],
-  onUpdateDaerahIrigasi
+  onUpdateDaerahIrigasi,
+  defaultTab = 'irigasi'
 }: OperasionalProps) {
   // Navigation Tabs: 'tma' (Pemantauan Tinggi Muka Air) or 'irigasi' (Inventaris Daerah Irigasi)
-  const [activeTab, setActiveTab] = useState<'tma' | 'irigasi'>('irigasi');
+  const [activeTab, setActiveTab] = useState<'tma' | 'irigasi'>(defaultTab);
+
+  React.useEffect(() => {
+    setActiveTab(defaultTab);
+  }, [defaultTab]);
 
   // --- STATE FOR WATER FLOWS / TMA ---
   const [showTmaModal, setShowTmaModal] = useState(false);

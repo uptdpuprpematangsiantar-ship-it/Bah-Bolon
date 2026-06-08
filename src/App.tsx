@@ -118,7 +118,7 @@ export default function App() {
 
   // --- Storage Clean Hard Reset on Mount ---
   useEffect(() => {
-    const isReset = localStorage.getItem('siat_storage_reset_v4');
+    const isReset = localStorage.getItem('siat_storage_reset_v5');
     if (!isReset) {
       localStorage.removeItem('siat_penatausahaan');
       localStorage.removeItem('siat_operasional');
@@ -127,11 +127,13 @@ export default function App() {
       localStorage.removeItem('siat_personalia');
       localStorage.removeItem('siat_aset_inventaris');
       localStorage.removeItem('siat_keuangan');
-      localStorage.setItem('siat_storage_reset_v4', 'done');
+      localStorage.removeItem('siat_daerah_irigasi');
+      localStorage.setItem('siat_storage_reset_v5', 'done');
 
       // Set state to empty lists immediately
       setPenatausahaan([]);
       setOperasional([]);
+      setDaerahIrigasi([]);
       setPembangunan([]);
       setAdmUmum([]);
       setPersonalia([]);
@@ -369,6 +371,7 @@ export default function App() {
           />
         );
       case 'operasional':
+      case 'operasional_tma':
         return (
           <Operasional
             items={operasional}
@@ -377,6 +380,19 @@ export default function App() {
             onDeleteItem={handleDeleteOperasional}
             daerahIrigasiItems={daerahIrigasi}
             onUpdateDaerahIrigasi={setDaerahIrigasi}
+            defaultTab="tma"
+          />
+        );
+      case 'inventaris_irigasi':
+        return (
+          <Operasional
+            items={operasional}
+            onAddItem={handleAddOperasional}
+            onUpdateItem={handleUpdateOperasional}
+            onDeleteItem={handleDeleteOperasional}
+            daerahIrigasiItems={daerahIrigasi}
+            onUpdateDaerahIrigasi={setDaerahIrigasi}
+            defaultTab="irigasi"
           />
         );
       case 'pembangunan':
