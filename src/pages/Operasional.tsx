@@ -487,12 +487,12 @@ export default function Operasional({
             </div>
 
             <div className="bg-white border border-slate-150 p-4 rounded-2xl flex items-center gap-3.5 shadow-3xs">
-              <div className="h-10 w-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+              <div className="h-10 w-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 shrink-0">
                 <Waves className="h-5 w-5" />
               </div>
               <div>
                 <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Luas Total Layanan</p>
-                <p className="text-base font-black text-emerald-700 font-sans">{statLuasTotal.toLocaleString('id-ID')} <span className="text-xs font-medium text-slate-450">Ha Sawah</span></p>
+                <p className="text-base font-black text-sky-700 font-sans">{statLuasTotal.toLocaleString('id-ID')} <span className="text-xs font-medium text-slate-450">Ha Sawah</span></p>
               </div>
             </div>
 
