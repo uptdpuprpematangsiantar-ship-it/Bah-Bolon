@@ -38,7 +38,7 @@ export default function Dashboard({ activeUser }: DashboardProps) {
               Anda masuk sebagai <strong className="text-sky-400 uppercase tracking-wide text-xs">{activeUser.role}</strong> pada <strong className="text-sky-300">{activeUser.department}</strong>. Seluruh basis data transaksi telah berhasil dikosongkan dan siap untuk dikonstruksi ulang sesuai keinginan Anda.
             </p>
           </div>
-          <div className="flex items-center gap-3 shrink-0 bg-slate-900/60 backdrop-blur border border-slate-800 p-4 rounded-2xl">
+          <div className="flex items-center gap-3 shrink-0 bg-sky-400/15 backdrop-blur border border-sky-400/30 p-4 rounded-2xl">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-500 flex items-center justify-center">
               <User className="h-5 w-5 text-white" />
             </div>
