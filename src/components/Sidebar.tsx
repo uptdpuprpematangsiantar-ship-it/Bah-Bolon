@@ -61,12 +61,8 @@ export default function Sidebar({
     { 
       id: 'operasional', 
       label: 'Seksi Operasional OP', 
-      icon: Waves, 
-      color: 'text-cyan-700',
-      subPages: [
-        { id: 'operasional_tma', label: 'Teleskop TMA & Bendung', icon: Droplets, color: 'text-cyan-700' },
-        { id: 'inventaris_irigasi', label: 'Inventaris Daerah Irigasi', icon: Compass, color: 'text-indigo-700' },
-      ]
+      icon: Compass, 
+      color: 'text-cyan-700'
     },
     { id: 'pembangunan', label: 'Seksi Pembangunan', icon: HardHat, color: 'text-amber-700' },
     { id: 'settings', label: 'Pengaturan Sistem', icon: Settings, color: 'text-indigo-700' },

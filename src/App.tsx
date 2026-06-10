@@ -372,27 +372,11 @@ export default function App() {
         );
       case 'operasional':
       case 'operasional_tma':
-        return (
-          <Operasional
-            items={operasional}
-            onAddItem={handleAddOperasional}
-            onUpdateItem={handleUpdateOperasional}
-            onDeleteItem={handleDeleteOperasional}
-            daerahIrigasiItems={daerahIrigasi}
-            onUpdateDaerahIrigasi={setDaerahIrigasi}
-            defaultTab="tma"
-          />
-        );
       case 'inventaris_irigasi':
         return (
           <Operasional
-            items={operasional}
-            onAddItem={handleAddOperasional}
-            onUpdateItem={handleUpdateOperasional}
-            onDeleteItem={handleDeleteOperasional}
             daerahIrigasiItems={daerahIrigasi}
             onUpdateDaerahIrigasi={setDaerahIrigasi}
-            defaultTab="irigasi"
           />
         );
       case 'pembangunan':
